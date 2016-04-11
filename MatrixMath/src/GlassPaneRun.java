@@ -24,6 +24,7 @@ public final class GlassPaneRun {
 					ViewGlass.java --- serialVersionUID = 3L; 
 					
 	 */
+	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 0L;
 	
     /**

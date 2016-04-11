@@ -29,6 +29,7 @@ public final class ModelGlass implements ModelGlassInt {
 					ViewGlass.java --- serialVersionUID = 3L; 
 					
 	 */
+	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 2L;
 
 	public ModelGlass() {
@@ -221,11 +222,11 @@ public final class ModelGlass implements ModelGlassInt {
 	private void loadModelScene1() {
 		
 		int count = 0; // goes up by 1 each iteration over i, j, and k;
-		for(int i = -5; i < 5 ; i++){
-			for(int k = -5; k < 5; k++){
-				for(int z = -5; z < 5; z++){
+		for(int i = -2; i < 2 ; i++){
+			for(int k = -2; k < 2; k++){
+				for(int z = -2; z < 2; z++){
 					//spacer = (float) (6.0f + 5.0f*Math.cos((System.currentTimeMillis()-this.startTime)/10000));
-					Cube cube1 = new Cube(10.0f);
+					Cube cube1 = new Cube(1.0f);
 					//
 					Vector3f dist1 = new Vector3f((float)i, (float)k, (float)z);
 
