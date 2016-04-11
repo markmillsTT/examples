@@ -117,41 +117,33 @@ public class GlassPanel extends JPanel {
 						allDistances[i] = vectorList.get(i);
 					}
 					
-					List<Float> dimensionalCoordinates = new ArrayList<Float>();
-
+					List<Float> unSortedXList = new ArrayList<Float>();
+					List<Float> unSortedYList = new ArrayList<Float>();
+					List<Float> unSortedZList = new ArrayList<Float>();
+					
 					for(int i = 0; i < allDistances.length ; i++)
 					{
-						dimensionalCoordinates.add(allDistances[i].x());
-						dimensionalCoordinates.add(allDistances[i].y());
-						dimensionalCoordinates.add(allDistances[i].z());
+						unSortedXList.add(allDistances[i].x());
+						unSortedYList.add(allDistances[i].y());
+						unSortedZList.add(allDistances[i].z());
 					}
 					
 					/***
 					 * 		High Priority Section
 					 * 
 					 * 			Study. Report. Contact - The law offices of yoyomommasbutt.com
-					 * 
+					 * 			
+					 * 	
+					 * 				PROBLEM: QuickSort.QuickSort_Iterative_Mark_Mills_Return(...,...,...); returns empty List<Float>
 					 * 
 					 * 				
-					 				List<Float> unSortedYList = new ArrayList<Float>();
-									List<Float> unSortedZList = new ArrayList<Float>();
+					 				List<Float> unSortedXList
+					 				List<Float> unSortedYList
+									List<Float> unSortedZList
 					 * 
 					 * 
 					 * 
-					 * ***///
-					
-					List<Float> unSortedXList = new ArrayList<Float>();
-					List<Float> unSortedYList = new ArrayList<Float>();
-					List<Float> unSortedZList = new ArrayList<Float>();
-					
-					for(int i = 0; i < ( dimensionalCoordinates.size()/3 - 2) ; i++)
-					{
-						if(i==3000)
-							System.out.println("blah");
-						unSortedXList.add(dimensionalCoordinates.get(3 * i));
-						unSortedYList.add(dimensionalCoordinates.get(3 * (i+1)) );
-						unSortedZList.add(dimensionalCoordinates.get(3 * (i+2)) );
-					}
+					 * ***/
 					
 					@SuppressWarnings("unused")
 					List<Float> sortedXList = QuickSort.QuickSort_Iterative_Mark_Mills_Return(
@@ -171,6 +163,8 @@ public class GlassPanel extends JPanel {
 							0, 
 							0);
 					
+					// HACK: Workaround is to use the unsorted list - until sorting and positioning of ViewableObjects can be completed  
+					//		See: Rasterization 
 					// FACT: sortedXList.size() == sortedYList.size() == sortedZList.size()
 					// FACT: unSortedXList.size() == unSortedYList.size() == unSortedZList.size()
 					for(int j = 0; j < unSortedXList.size() ; j++){
@@ -383,15 +377,37 @@ public class GlassPanel extends JPanel {
 		 */
 		private Vector3f mapVector3fToPixelVector3f(Vector3f origin, Dimension drawingBoundsForPort) {
 			
-			float scale = .5f/(float)origin.z() ;
-			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			/**
+			 * 
+			 * MAP (SEE NOTES FIGURE 1A)
+			// .5 = x0
+			// .3 = y0
+			// multiplierX * x0 = drawingBoundsForPort.width
+			// multiplierY * y0 = drawingBoundsForPort.height
+			//
+			//
+			 * multiplierX * .5 = drawingBoundsForPort.width
+			 * multiplierY * .3 = drawingBoundsForPort.height
+			 * 
+			 * multiplierX = drawingBoundsForPort.width / .5
+			 * multiplierY = drawingBoundsForPort.height / .3
+			 * 
+			 * 
+			//
+			// .5| .3| .z|
+			 *   \   \   \
+			 *    \   \   \
+			 *    A    B    ----------------------------------------------[ A ]          
+			 *    |     L_______________________________________________     | 
+			 *    |                       |                            |     |
+			// drawingBoundsForPort.width | drawingBoundsForPort.height|   .Z|
+			**/
+			float multiplierX = drawingBoundsForPort.width / .5f;
+			float multiplierY = drawingBoundsForPort.height / .3f;
 			
-			//XXX HACK TO GET WINDOW TO WORK WITHOUT NATIVE LIBRARY
-			float xVect = (float)( drawingBoundsForPort.width/2.0f-scale*((float)origin.x())*
-					screenSize.getWidth()/.34f);
-			float yVect = (float)( drawingBoundsForPort.height/2.0f+scale*((float)origin.y())* 
-					screenSize.getHeight()/.19f);
-			float zVect = scale*(float)origin.z();
+			float xVect = (float)( origin.x() * multiplierX );
+			float yVect = (float)( origin.y() * multiplierY );
+			float zVect = (float)( origin.z() * multiplierX );
 //			//scale to screen (.5 meters away)
 //			pixVector3f.scale(.5f/pixVector3f.z());
 //			//move grid system to match computers
