@@ -139,204 +139,53 @@ public class GlassPanel extends JPanel {
 					 * 
 					 * 
 					 * ***///
+					
+					List<Float> unSortedXList = new ArrayList<Float>();
+					List<Float> unSortedYList = new ArrayList<Float>();
+					List<Float> unSortedZList = new ArrayList<Float>();
+					
+					for(int i = 0; i < dimensionalCoordinates.size()/3 - 2; i++)
+					{
+						if(i==3000)
+							System.out.println("blah");
+						unSortedXList.add(dimensionalCoordinates.get(3 * i));
+						unSortedYList.add(dimensionalCoordinates.get(3 * (i+1)) );
+						unSortedZList.add(dimensionalCoordinates.get(3 * (i+2)) );
+					}
+					
 					@SuppressWarnings("unused")
-					List<Float> listSorted_Xcoordnates = QuickSort.QuickSort_Iterative_Mark_Mills_Return(
-							dimensionalCoordinates, 
+					List<Float> sortedXList = QuickSort.QuickSort_Iterative_Mark_Mills_Return(
+							unSortedXList, 
 							0, 
 							0);
 					
-//					@SuppressWarnings("unused")
-//					List<Float> sortedYList = QuickSort.QuickSort_Iterative_Mark_Mills_Return(
-//							unSortedYList, 
-//							0, 
-//							0);
-//					
-//					@SuppressWarnings("unused")
-//					List<Float> sortedZList = QuickSort.QuickSort_Iterative_Mark_Mills_Return(
-//							unSortedZList, 
-//							0, 
-//							0);
+					@SuppressWarnings("unused")
+					List<Float> sortedYList = QuickSort.QuickSort_Iterative_Mark_Mills_Return(
+							unSortedYList, 
+							0, 
+							0);
+					
+					@SuppressWarnings("unused")
+					List<Float> sortedZList = QuickSort.QuickSort_Iterative_Mark_Mills_Return(
+							unSortedZList, 
+							0, 
+							0);
 					
 					// FACT: sortedXList.size() == sortedYList.size() == sortedZList.size()
 					// FACT: unSortedXList.size() == unSortedYList.size() == unSortedZList.size()
 					for(int i = 0; i < dimensionalCoordinates.size() ; i++){
 						
-						///***
-						/*
-						/// TODO - 
-						///
-						///    Hi. World..
-						///        What is up with ladders?
-						///          are
-						///            they
-						///              upOrDown?
-						///
-						///
+						if(sortedXList.size() == 0 ||
+								sortedYList.size() == 0 ||
+								sortedZList.size() == 0)  {
+							return;
+						}
 						
-						/// Or do they fit in between the earth and its environment - upbringing - and family
-						
-//						//i
-//						/i
-//						i
-						
-						///  Log Day 8
-						///    I find myself in a world of thought, machine like outputting, and overall meshing of sound body and spirit
-						
-						// forever alone - alive - and well in memory and thought of this file ... GlassPanel.
-						//   originally designed by yours truly... Mark David Mills
-						 * 
-						 * 			//update 
-						 * 
-						 * 			Log Day 9 
-						 * 
-						 *  Steady morning after Coma - 
-						 *  
-						 *  I fell asleep at my Fitness club adfter this meeting with Dr. Keating.
-						 *    The place was peaceful - and a good place to live. 
-						 *    I felt good to be alive.
-						 *    
-						 *      The result was waking up with my room mate -
-						 *      - who apparently is moving out for some crazy fucking reason ... -
-						 *      - Cool ass dude. Been really interesting. I can see something now.
-						 *      						something just changed
-						 *      
-						 *      what ? how did you make me giggle so good 
-						 *      --- I had to use q-tips to sneeze.... 
-						 *      --- hhehehe AAHHH CHOOO!!! IM SICK YAYY!!!
-						 *                              
-						 *                              
-						 *                              HELLO WORLD! I love the exploration of both the mind and the bodyi loce you.
-						 *                              some sort of asynchrous transmition. 
-						 *                              -- Resulting in not an output but an input. 
-						 *                              -- There are sets and there are different environments which we can group in asycnchronous sort of problem. 
-						 *                              --   no you don't . ---- the video hames
-						 *                                                       no. no.. no.... 
-						 *                                                       |               \        ___   ___    ___
-						 *                                                       |                This.  | ___________      \
-						 *                                                       |                      /             |     / \ / \ / \ / \
-						 *                                                       |                      |             |
-						 *                                                       |                      |             |
-						 *                                                       |                      |             |
-						 *                                                       |                      |             |
-						 *                                                       |                      |             |
-						 *                                                       |                      |             |
-						 *                                                       |                      |             |
-						 *                                                       |                      |             |
-						 *                                                       |                      |             |
-						 *                                                       |                      |             |
-						 *                                                       |                      |             |
-						 *                                                       |                      |             |
-						 *                                                       |                      |             |
-						 *                                                       |                      |             |
-						 *                                                       |                      |             |
-						 *                                                       |                      |             |
-						 *                                                       |                      |             |
-						 *                                                       |                      |             |
-						 *                                                       |                      |             |   
-						 *                                                       |                     /              \     \ --------  --------           \
-						 *                                                       |                     |  -          _ |     |   --    --   \
-						 *                                                       |                     |    -      _   |     |    -     -   /
-						 *                                                       |                     |      -  _     |     |      -    - /
-						 *                                                       |                     |       _ -     |    |     --  --   \ 
-						 *                                                       |                     |     _     -   |   |    ________    \
-						 *                                                       |                     |   _         - |  |                 /
-						 *                                                       |                     | _           -  | |________________/
-						 *                                                       |                     ||            - | |
-						 *                                                       |                     ||            -| |
-						 *                                                       |                     ||------------| |
-						 *                                                       
-						 *                                                           Certified    Mummy    Operations - 
-						 *                                                       - nnnnnnnn nserisoulsy man.
-						 *                                                       -- serrrrrriooouuusssssllllyyyyy. 
-						 *        
-						 *  
-						 *  Got hypnotized at doc Keating's this Saturday now I'm in some different state 
-						 *  -- aerials in the sky when you loose small mind you free your mind 
-						 *  ---- Aerials so alive when you free our life ..... eternal prize 
-						 *  ------ System of a Down
-						 *  
-						 *  
-						
-						///
-						
-						///  Loft with Mars - jump with Pluto
-						///
-						/// This is some Era 2013 shit. Fuck Yeah.
-						 * 
-						 * This
-						 * Program
-						 * Kicks
-						 * The
-						 * Ants
-						 * Off 
-						 * your --->>>       ((((____[[[[___|||||___]]]]]___)))
-						 *        --->>>      ((((____{{{{___|||___}}}}___)))
-						 *          --->>>     ((((____{{{{___|___}}}}___)))
-						 *            --->>>    ((((____{{{{___i___}}}}___)))
-						 *               --->>>  ((((_I_C_(A(N_S_8_E_}Y}U_N_O)W
-						 *                 --->>> (_-_-_ ) --)>> || || || || i can't __ see __ you ___ ANYMORRRREEEEE!!!!!!!
-						 *                 --->>>  88888888888888888888asdlkfnalskdfn
-						 *                 888888
-						 *                 8888888888asdfijkasdl;kfjasdflkjasdfl;kas
-						 *                 8888888888888asdflkjnasdlfkn
-						 *                 888888888888888           Thiss    hikasdfknbkajsdjals;kdjfie s  s s s s s  s s s s s  s s s s s   s  s s s  s s s  s 
-						 *                 8888888888888  s s s  s s s s s s  s s ss  s s s s s  s  s ss  s  s   s s  as dsad a sd f as d f asdf  asd f asdf  a sdf asdf a sdf as
-						 *                 8888888888					file Mark Mills rocks mah socks
-						 *                 888888
-						 *                 88888       nasl;kdf;lkasdfl;nal;sndflasld;kfnalk;sdnf   asdfghjklqwertyuiopzxcvbnm my name is mark
-						 *                 i rox; k; k; k; k; k ; k; k ; k; k ; k ;k ; kl k ml m k lk l l   kadkf;lkasdjfkl;ajsd;fljal;ksjdfkjasdfl;kja;klsdjfkl;asdjfl;kajsdf;lkjasd;fjas
-						 *                 89asdjflkasdflalskdfl;kasndvl;kadvaoidnkl;asdnfkl;dfill in the missing details man kalsjdf;lkajsdf;ljas;ldkf; laslkdjfl;kajsdfl;kjaskdlfj
-						 *                 
-						 *                 sometimes some friends of mine walk 5 miles up the instagram --- you know it's green and drippy --- you can find the waterfall
-						 *                 
-						 *                 
-						 *                 -- Swimm
-						 *                 
-						 *                 -----climb up behind it
-						 *                 
-						 *                 
-						 *                 endless playground of green text and infinite amounts of work to be accomplish --- minus I can finish my job tonight
-						 *                 
-						 *                 some bloc is going to have to pick up this message and complete this work for me.
-						 *                 
-						 *                 The program works and compiles. I'll monitor the backbones. and you go for it.
-						 *                 
-						 *                 
-						 *                 
-						 *                 
-						 *                 
-						 *                 
-						 *                 asdofj;lasdjf;lkajsd
-						 *                 8     s  s  s  s s  ssssssssssalskdf;lkasdfl;kna;lkfjaasdfn.kasd  ssss  s  s  s s s s 
-						 *                 8ss  s s s asdpjfil;aksdjfm   s  s s s  s s s  s s s  s s s  s s s s  s s  s s s s  s s s  s s ss s  s  s ss  s s s  s s  s s
-						 *                 99   s s   jajsdfkjasjkdfkjasndfjknasdkfjn
-						 *                 8   d  s      jklsdjklfjsldkflasdjflkjdflaslkasd.kjfn;akdnsf;klnadj
-						 *                 9   d s     aksjdflkajsdlfkjlasjdflajsdlfkjlaksjdflkjas
-						 *                 89    d  ajsdflkasjdflasjdflkjadslkfjalksdfjlk
-						 *                 8   a   alksdjflk jasldkjf lkajsdlfkjlaksdj
-						 *                 99
-						 *                 99999999999999983883838383838388338832u2uu2u2u2uu2u2u2u2u2h222hh2h2n2n2n2nn22kh2kh2kjh2kh2khkj2h3kjhk2jh3k4jh23khj4k2jh34kjh23kjh3
-						 * 
-						 * 
-						 * 
-						 * 
-						 * */
-						
-// We need this sort to work -- but I just can't do it alone...
-						
-						// CUBES!!!
-						
-//						Vector3f distance = new Vector3f(
-//								sortedXList.get(i),
-//								sortedYList.get(i+1),
-//								sortedZList.get(i+2)
-//								);
-						
-						// HACK: Workaround for above problem - Currently broken... I think...
 						Vector3f dimensionalCoordVector = new Vector3f(
-								dimensionalCoordinates.get(i),
-								0,
-								0);
+								sortedXList.get(i),
+								sortedYList.get(i+1),
+								sortedZList.get(i+2)
+								);
 								
 						//1// To draw inside sphere, need to find xy - onscreen radius, calculate only once
 						Ellipse2D oval = new Ellipse2D.Float();
