@@ -226,11 +226,12 @@ public final class ModelGlass implements ModelGlassInt {
 			for(int k = -2; k < 2; k++){
 				for(int z = -2; z < 2; z++){
 					//spacer = (float) (6.0f + 5.0f*Math.cos((System.currentTimeMillis()-this.startTime)/10000));
-					Cube cube1 = new Cube(1.0f);
-					//
+//					Cube vo = new Cube(1.0f);
+					//Sphere
+					Sphere vo = new Sphere(.5f,9, 8);
 					Vector3f dist1 = new Vector3f((float)i, (float)k, (float)z);
 
-					loadObjectLocation(1, dist1 , cube1, count);
+					loadObjectLocation(1, dist1 , vo, count);
 					count++;
 				}
 			}
@@ -245,7 +246,7 @@ public final class ModelGlass implements ModelGlassInt {
 				for(int z = -1; z < 1; z++){
 					spacer = 100.0f;
 					Sphere sphere = new Sphere(5.0f,8,16);
-					Vector3f dist1 = new Vector3f((float)8*k,(float)8*z,(float)-40f);
+					Vector3f dist1 = new Vector3f((float).2*k,(float).2*z,(float)-.5f);
 
 					loadObjectLocation(2, dist1 , sphere, count);
 					count++;

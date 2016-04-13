@@ -61,7 +61,7 @@ public class GlassPanel extends JPanel {
 		ControllerGlassInt controller;
 		private Color backgroundColor = new Color(128,128,0);
 		boolean drawMesh = true;
-		boolean fillObjects = false;
+		boolean fillObjects = true;
 		int renderCount = 0;
 		
 		public GlassPanel(int panelNum,ControllerGlassInt controller){
@@ -262,7 +262,7 @@ public class GlassPanel extends JPanel {
 	//								paint.createContext(arg0, arg1, arg2, arg3, arg4)
 									g2.setPaint(new GradientPaint(0,0,Color.GREEN,2000, 0,Color.WHITE));
 									g2.fill(oval);
-									firstPointDrawn = false;
+									firstPointDrawn = true;
 								}
 								
 								g2.setStroke(new BasicStroke(1));
@@ -378,21 +378,6 @@ public class GlassPanel extends JPanel {
 		private Vector3f mapVector3fToPixelVector3f(Vector3f origin, Dimension drawingBoundsForPort) {
 			
 			/**
-			 * 
-			 * MAP (SEE NOTES FIGURE 1A)
-			// .5 = x0
-			// .3 = y0
-			// multiplierX * x0 = drawingBoundsForPort.width
-			// multiplierY * y0 = drawingBoundsForPort.height
-			//
-			//
-			 * multiplierX * .5 = drawingBoundsForPort.width
-			 * multiplierY * .3 = drawingBoundsForPort.height
-			 * 
-			 * multiplierX = drawingBoundsForPort.width / .5
-			 * multiplierY = drawingBoundsForPort.height / .3
-			 * 
-			 * 
 			//
 			// .5| .3| .z|
 			 *   \   \   \
@@ -402,21 +387,21 @@ public class GlassPanel extends JPanel {
 			 *    |                       |                            |     |
 			// drawingBoundsForPort.width | drawingBoundsForPort.height|   .Z|
 			**/
-			float multiplierX = drawingBoundsForPort.width / .5f;
-			float multiplierY = drawingBoundsForPort.height / .3f;
 			
+			// Switch to polar coordinates
+			double radius = Math.sqrt( Math.pow(origin.x(),2) + Math.pow(origin.y(),2) + Math.pow(origin.z(),2) );
+			double theta = Math.acos(origin.z()/radius);
+			double phi = Math.atan(origin.y()/origin.x());
+			
+			//Place on Screen
+			float multiplierX = drawingBoundsForPort.width;
+			float multiplierY = drawingBoundsForPort.height;
+			double multiplierZ = .5 * Math.cos(phi);		
+					
+			//Scale then Adjust to center screen
 			float xVect = (float)( origin.x() * multiplierX );
 			float yVect = (float)( origin.y() * multiplierY );
-			float zVect = (float)( origin.z() * multiplierX );
-//			//scale to screen (.5 meters away)
-//			pixVector3f.scale(.5f/pixVector3f.z());
-//			//move grid system to match computers
-//			pixVector3f.setX(-pixVector3f.x());
-//			//scale to pixels
-//			pixVector3f.setX((float) (pixVector3f.x() * screenSize.getWidth()/.34)); // meter Vector3f * pixel/meter .. topLeft = <pixel,pixel,meter>
-//			pixVector3f.setY((float) (pixVector3f.y() * screenSize.getHeight()/.19));
-//			Vector3f window = new Vector3f();drawingBoundsForPort.width/2.0f,drawingBoundsForPort.height/2.0f,0f);
-//			pixVector3f = new Vector3f();window.x()+pixVector3f.x(),window.y()+pixVector3f.y(),window.z()+pixVector3f.z());
+			float zVect = (float)( origin.z() * multiplierZ );
 			
 			Vector3f pixVector3f = new Vector3f(
 					(float)xVect,
@@ -424,6 +409,22 @@ public class GlassPanel extends JPanel {
 					(float)zVect
 					);
 
+			//scale to screen (.5 meters away)
+			float xScaledToZ = pixVector3f.x() / .5f;
+			float yScaledToZ = pixVector3f.y() / .5f;
+			
+			pixVector3f.setX(xScaledToZ);
+			pixVector3f.setY(yScaledToZ);
+			
+			//move grid system to match computers
+//			pixVector3f.setX(-pixVector3f.x());
+			
+			//scale to pixels
+//			pixVector3f.setX((float) (pixVector3f.x() * screenSize.getWidth()/.34)); // meter Vector3f * pixel/meter .. topLeft = <pixel,pixel,meter>
+//			pixVector3f.setY((float) (pixVector3f.y() * screenSize.getHeight()/.19));
+//			Vector3f window = new Vector3f();drawingBoundsForPort.width/2.0f,drawingBoundsForPort.height/2.0f,0f);
+//			pixVector3f = new Vector3f();window.x()+pixVector3f.x(),window.y()+pixVector3f.y(),window.z()+pixVector3f.z());
+			
 			return pixVector3f;
 		}
 		
