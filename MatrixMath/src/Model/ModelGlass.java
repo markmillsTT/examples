@@ -18,7 +18,7 @@ import Helpers.Vector3f;
  */
 public final class ModelGlass implements ModelGlassInt {
 	
-	Map<Integer,Map<Vector3f,ViewableObject>> objectLocations = new HashMap<Integer,Map<Vector3f,ViewableObject>>();
+	Map<Integer,Map<Vector3f,CoordinateSystem>> objectLocations = new HashMap<Integer,Map<Vector3f,CoordinateSystem>>();
     private long startTime;
     float spacer;
     /****
@@ -69,13 +69,13 @@ public final class ModelGlass implements ModelGlassInt {
 			return;
 		}
 		synchronized(this) {
-			Map<Vector3f, ViewableObject> sceneMapHold = new HashMap<Vector3f, ViewableObject>();
-			Map<Vector3f, ViewableObject> currentSceneMap = objectLocations.remove(sceneNum);
+			Map<Vector3f, CoordinateSystem> sceneMapHold = new HashMap<Vector3f, CoordinateSystem>();
+			Map<Vector3f, CoordinateSystem> currentSceneMap = objectLocations.remove(sceneNum);
 			Iterator<Vector3f> iterator = currentSceneMap.keySet().iterator();
 			while(iterator.hasNext()){
 //				long t = (long) ((System.currentTimeMillis()-this.startTime)/1000f);
 				Vector3f currentLocation = iterator.next();
-				ViewableObject vo = currentSceneMap.get(currentLocation);
+				CoordinateSystem coordSystem = currentSceneMap.get(currentLocation);
 				
 //				float mult = 0.05f;
 				Vector3f vel = new Vector3f(.005f,-.005f,-.005f);
@@ -93,7 +93,7 @@ public final class ModelGlass implements ModelGlassInt {
 				currentLocation.setY((float) ((float)currentLocation.y()+(float)vel.y()));
 				currentLocation.setZ((float) ((float)currentLocation.z()+(float)vel.z()));
 				
-				sceneMapHold.put(currentLocation, vo);
+				sceneMapHold.put(currentLocation, coordSystem);
 			}
 			
 			objectLocations.put(sceneNum, sceneMapHold);
@@ -105,13 +105,13 @@ public final class ModelGlass implements ModelGlassInt {
 			return;
 		}
 		synchronized(this) {
-			Map<Vector3f, ViewableObject> sceneMapHold = new HashMap<Vector3f, ViewableObject>();
-			Map<Vector3f, ViewableObject> currentSceneMap = objectLocations.remove(sceneNum);
+			Map<Vector3f,CoordinateSystem> sceneMapHold = new HashMap<Vector3f,CoordinateSystem>();
+			Map<Vector3f,CoordinateSystem> currentSceneMap = objectLocations.remove(sceneNum);
 			Iterator<Vector3f> iterator = currentSceneMap.keySet().iterator();
 			while(iterator.hasNext()){
 //				float t = ((System.currentTimeMillis()-this.startTime)/10000f);
 				Vector3f currentLocation = iterator.next();
-				ViewableObject vo = currentSceneMap.get(currentLocation);
+				CoordinateSystem coordSystem = currentSceneMap.get(currentLocation);
 				
 //				float mult = 0.5f;
 				Vector3f vel = new Vector3f(.02f,.01f,-.09f);
@@ -124,7 +124,7 @@ public final class ModelGlass implements ModelGlassInt {
 				currentLocation.setY( (float) currentLocation.y()+ (float)vel.y());
 				currentLocation.setZ( (float) currentLocation.z()+ (float)vel.z());
 				
-				sceneMapHold.put(currentLocation, vo);
+				sceneMapHold.put(currentLocation, coordSystem);
 			}
 			
 			objectLocations.put(sceneNum, sceneMapHold);
@@ -230,8 +230,12 @@ public final class ModelGlass implements ModelGlassInt {
 					//Sphere
 					Sphere vo = new Sphere(.5f,9, 8);
 					Vector3f dist1 = new Vector3f((float)i, (float)k, (float)z);
-
-					loadObjectLocation(1, dist1 , vo, count);
+					CoordinateSystem coordSystem = new CoordinateSystem(0);
+					coordSystem.setDistanceVectorFromOrg(dist1);
+					
+					coordSystem.addToViewables(vo);
+					
+					loadObjectLocation(1, dist1 , coordSystem, count);
 					count++;
 				}
 			}
@@ -247,8 +251,12 @@ public final class ModelGlass implements ModelGlassInt {
 					spacer = 100.0f;
 					Sphere sphere = new Sphere(5.0f,8,16);
 					Vector3f dist1 = new Vector3f((float).2*k,(float).2*z,(float)-.5f);
-
-					loadObjectLocation(2, dist1 , sphere, count);
+					CoordinateSystem coordSystem = new CoordinateSystem(0);
+					coordSystem.setDistanceVectorFromOrg(dist1);
+					
+					coordSystem.addToViewables(sphere);
+					
+					loadObjectLocation(2, dist1 , coordSystem, count);
 					count++;
 				}
 			}
@@ -264,8 +272,12 @@ public final class ModelGlass implements ModelGlassInt {
 		
 		Sphere sphere1 = new Sphere(sphereRadius,8,16);
 		Vector3f dist1 = new Vector3f(0f,0,(float)zStart);
+		CoordinateSystem coordSystem = new CoordinateSystem(0);
+		coordSystem.setDistanceVectorFromOrg(new Vector3f(0,0,-50f));
 		
-		loadObjectLocation(3, dist1 , sphere1, count);
+		coordSystem.addToViewables(sphere1);
+		
+		loadObjectLocation(3, dist1 , coordSystem, count);
 		count++;
 		
 		int numSections = 8;
@@ -278,18 +290,27 @@ public final class ModelGlass implements ModelGlassInt {
 						(float)(radius*Math.cos(phi)),
 						(float)(radius*Math.sin(phi)*Math.sin(theta) + zStart)
 						);
+				CoordinateSystem coordSystemN = new CoordinateSystem(count);
+				coordSystemN.setDistanceVectorFromOrg(new Vector3f(0,0,-50f));
+				count++;
 				
-				loadObjectLocation(3, dist1 , cube1, count);
+				coordSystem.addToViewables(cube1);
+				
+				loadObjectLocation(3, dist1 , coordSystemN, count);
 				count++;
 			}
 		}
+	
 	}
 	
 	private void loadModelScene4() {
 		Cube cube1 = new Cube(1.0f);
 		Vector3f dist1 = new Vector3f(0f,0f,-5f);
+		CoordinateSystem coordSystem = new CoordinateSystem(0);
+		
+		coordSystem.addToViewables(cube1);
 
-		loadObjectLocation(4, dist1 , cube1, 0);
+		loadObjectLocation(4, dist1 , coordSystem, 0);
 	}
 	
 	@Override 
@@ -308,19 +329,19 @@ public final class ModelGlass implements ModelGlassInt {
     }
     
 	@Override
-    public void loadObjectLocation(int sceneNum, Vector3f dist1, ViewableObject vo, int count){
+    public void loadObjectLocation(int sceneNum, Vector3f dist1, CoordinateSystem coordSystem, int count){
 //    	Matrix4x4 matrix = getIdentityMatrix();
 //    	matrix.setAt00(Vector3f.getX());
 //    	matrix.setAt11(Vector3f.getY());
 //    	matrix.setAt22(Vector3f.getZ());
 //    	matrix.setAt33(count);
     	if(!objectLocations.containsKey(sceneNum))
-    		objectLocations.put(sceneNum, new HashMap<Vector3f,ViewableObject>());
-    	objectLocations.get(sceneNum).put(dist1, vo);
+    		objectLocations.put(sceneNum, new HashMap<Vector3f,CoordinateSystem>());
+    	objectLocations.get(sceneNum).put(dist1, coordSystem);
     }
     
 	@Override
-    public Map<Vector3f,ViewableObject> getObjectLocationsForScene(int sceneNum){
+    public Map<Vector3f,CoordinateSystem> getObjectLocationsForScene(int sceneNum){
     	return objectLocations.get(sceneNum);
     }
 

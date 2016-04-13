@@ -17,10 +17,10 @@ public interface ModelGlassInt {
 
 	void startModel();
 
-	void loadObjectLocation(int sceneNum, Vector3f Vector3f, ViewableObject vo,
+	void loadObjectLocation(int sceneNum, Vector3f Vector3f, CoordinateSystem coordSystem,
 			int count);
 	
-	Map<Vector3f, ViewableObject> getObjectLocationsForScene(int sceneNum);
+	Map<Vector3f, CoordinateSystem> getObjectLocationsForScene(int sceneNum);
 
 	void loadModelScene(int sceneNum);
 

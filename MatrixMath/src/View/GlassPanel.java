@@ -7,7 +7,6 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
-import java.awt.Toolkit;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -23,6 +22,7 @@ import javax.swing.JPanel;
 import Controller.ControllerGlassInt;
 import Helpers.QuickSort;
 import Helpers.Vector3f;
+import Model.CoordinateSystem;
 import Model.Cube;
 import Model.Sphere;
 import Model.ViewableObject;
@@ -61,7 +61,7 @@ public class GlassPanel extends JPanel {
 		ControllerGlassInt controller;
 		private Color backgroundColor = new Color(128,128,0);
 		boolean drawMesh = true;
-		boolean fillObjects = true;
+		boolean fillObjects = false;
 		int renderCount = 0;
 		
 		public GlassPanel(int panelNum,ControllerGlassInt controller){
@@ -91,7 +91,7 @@ public class GlassPanel extends JPanel {
 			g2.setPaint(new GradientPaint(0,0,Color.BLUE,2000, 0,Color.WHITE));
 			g2.fill(new Rectangle2D.Float(0,0,2000,2000));
 			
-			Map<Vector3f,ViewableObject> toBeDisplayed = controller.getCurrentSceneObjects();
+			Map<Vector3f,CoordinateSystem> toBeDisplayed = controller.getCurrentSceneObjects();
 			
 			if(toBeDisplayed != null){	
 				
@@ -208,124 +208,127 @@ public class GlassPanel extends JPanel {
 						Iterator<Vector3f> objectDistancesIterator = toBeDisplayed.keySet().iterator();
 						while(objectDistancesIterator.hasNext()){
 							Vector3f distance = objectDistancesIterator.next();
-							ViewableObject vo = toBeDisplayed.get(distance);
+							CoordinateSystem coordSystem = toBeDisplayed.get(distance);
 							
-							int[] vInd = vo.getVertexIndicies();
-							float[] vLoc = vo.getVertexLocations();
-							
-							//square based rendering
-							for(int k = 0; k < vInd.length/4 ; k++){
-								Vector3f point0 = new Vector3f(
-										(float)vLoc[3*vInd[4*k+0]+0]+(float)dimensionalCoordVector.x(),
-										(float)vLoc[3*vInd[4*k+0]+1]+(float)dimensionalCoordVector.y(),
-										(float)vLoc[3*vInd[4*k+0]+2]+(float)dimensionalCoordVector.z()
-										);
+							for(ViewableObject vo : coordSystem.getViewables()){
+
+								int[] vInd = vo.getVertexIndicies();
+								float[] vLoc = vo.getVertexLocations();
 								
-								Vector3f point1 = new Vector3f(
-										(float)vLoc[3*vInd[4*k+1]+0]+(float)dimensionalCoordVector.x(),
-										(float)vLoc[3*vInd[4*k+1]+1]+(float)dimensionalCoordVector.y(),
-										(float)vLoc[3*vInd[4*k+1]+2]+(float)dimensionalCoordVector.z()
-										);
-	
-								Vector3f point2 = new Vector3f(
-										(float) vLoc[ 3 * vInd[ (4 * k) + 2] + 0] + (float) dimensionalCoordVector.x(),
-										(float) vLoc[ 3 * vInd[ (4*k) + 2] + 1] + (float) dimensionalCoordVector.y(),
-										(float) vLoc[ 3 * vInd[ (4*k) + 2] + 2] + (float) dimensionalCoordVector.z()
-										);
+								//square based rendering
+								for(int k = 0; k < vInd.length/4 ; k++){
+									Vector3f point0 = new Vector3f(
+											(float)vLoc[3*vInd[4*k+0]+0]+(float)dimensionalCoordVector.x(),
+											(float)vLoc[3*vInd[4*k+0]+1]+(float)dimensionalCoordVector.y(),
+											(float)vLoc[3*vInd[4*k+0]+2]+(float)dimensionalCoordVector.z()
+											);
+									
+									Vector3f point1 = new Vector3f(
+											(float)vLoc[3*vInd[4*k+1]+0]+(float)dimensionalCoordVector.x(),
+											(float)vLoc[3*vInd[4*k+1]+1]+(float)dimensionalCoordVector.y(),
+											(float)vLoc[3*vInd[4*k+1]+2]+(float)dimensionalCoordVector.z()
+											);
+		
+									Vector3f point2 = new Vector3f(
+											(float) vLoc[ 3 * vInd[ (4 * k) + 2] + 0] + (float) dimensionalCoordVector.x(),
+											(float) vLoc[ 3 * vInd[ (4*k) + 2] + 1] + (float) dimensionalCoordVector.y(),
+											(float) vLoc[ 3 * vInd[ (4*k) + 2] + 2] + (float) dimensionalCoordVector.z()
+											);
+									
+									Vector3f point3 = new Vector3f(
+											(float) vLoc[ 3 * vInd[ 4*k+3 ] + 0] + (float) dimensionalCoordVector.x(),
+											(float) vLoc[ 3 * vInd[ 4*k+3 ] + 1] + (float) dimensionalCoordVector.y(),
+											(float) vLoc[ 3 * vInd[ 4*k+ 3] + 2] + (float) dimensionalCoordVector.z()
+											);
 								
-								Vector3f point3 = new Vector3f(
-										(float) vLoc[ 3 * vInd[ 4*k+3 ] + 0] + (float) dimensionalCoordVector.x(),
-										(float) vLoc[ 3 * vInd[ 4*k+3 ] + 1] + (float) dimensionalCoordVector.y(),
-										(float) vLoc[ 3 * vInd[ 4*k+ 3] + 2] + (float) dimensionalCoordVector.z()
-										);
-							
-								float length0 = getVector3fsAvgLength(point0,point1);
-								float length1 = getVector3fsAvgLength(point1,point2);
-								float length2 = getVector3fsAvgLength(point2,point3);
-								float length3 = getVector3fsAvgLength(point3,point0);
-								
-								Dimension drawingBoundsForPort = this.getSize();
-								point0 = mapVector3fToPixelVector3f(point0,drawingBoundsForPort);
-								point1 = mapVector3fToPixelVector3f(point1,drawingBoundsForPort);
-								point2 = mapVector3fToPixelVector3f(point2,drawingBoundsForPort);
-								point3 = mapVector3fToPixelVector3f(point3,drawingBoundsForPort);
-								
-								//1//
-								if(firstPointDrawn && vo instanceof Sphere && this.fillObjects){
-									Vector3f midPoint = mapVector3fToPixelVector3f(dimensionalCoordVector, drawingBoundsForPort);
-									insideRadius = (int) Math.sqrt(Math.pow((float)point0.x()-(float)midPoint.x(),2)+Math.pow((float)point0.y()-(float)midPoint.y(),2));
-									g2.setColor(new Color(255,255,255));
-								
-									oval.setFrame(Float.floatToIntBits((float)midPoint.x()-insideRadius),
-											Float.floatToIntBits((float)midPoint.y()-insideRadius),
-											2*insideRadius, 2*insideRadius);
-	//								paint.createContext(arg0, arg1, arg2, arg3, arg4)
-									g2.setPaint(new GradientPaint(0,0,Color.GREEN,2000, 0,Color.WHITE));
-									g2.fill(oval);
-									firstPointDrawn = true;
-								}
-								
-								g2.setStroke(new BasicStroke(1));
-								int shader = 0;
-								int maxDist = 80;
-								int minDist = 35;
-								
-								
-								if(drawMesh){
-									switch (renderCount){
-										case 0:
-											shader = Math.abs((int) ((length0 * 255 / (minDist-maxDist)) - maxDist*255/(minDist-maxDist))%255);
-											g2.setColor(new Color(shader,shader,shader));
-											break;
-										
-										case 1:
-											shader = Math.abs((int) ((length1 * 255 / (minDist-maxDist)) - maxDist*255/(minDist-maxDist))%255);
-											g2.setColor(new Color(shader,shader,(int) (shader/2.0)));
-											break;
-										
-										case 2:
-											shader = Math.abs((int) ((length2 * 255 / (minDist-maxDist)) - maxDist*255/(minDist-maxDist))%255);
-											g2.setColor(new Color(shader,shader,(int) (shader/4.0)));
-											break;
-										
-										case 3:
-											shader = Math.abs((int) ((length3 * 255 / (minDist-maxDist)) - maxDist*255/(minDist-maxDist))%255);
-											g2.setColor(new Color(shader,shader,(int) (shader/8.0)));
-											break;
+									float length0 = getVector3fsAvgLength(point0,point1);
+									float length1 = getVector3fsAvgLength(point1,point2);
+									float length2 = getVector3fsAvgLength(point2,point3);
+									float length3 = getVector3fsAvgLength(point3,point0);
+									
+									Dimension drawingBoundsForPort = this.getSize();
+									point0 = mapVector3fToPixelVector3f(point0,drawingBoundsForPort);
+									point1 = mapVector3fToPixelVector3f(point1,drawingBoundsForPort);
+									point2 = mapVector3fToPixelVector3f(point2,drawingBoundsForPort);
+									point3 = mapVector3fToPixelVector3f(point3,drawingBoundsForPort);
+									
+									//1//
+									if(firstPointDrawn && vo instanceof Sphere && this.fillObjects){
+										Vector3f midPoint = mapVector3fToPixelVector3f(dimensionalCoordVector, drawingBoundsForPort);
+										insideRadius = (int) Math.sqrt(Math.pow((float)point0.x()-(float)midPoint.x(),2)+Math.pow((float)point0.y()-(float)midPoint.y(),2));
+										g2.setColor(new Color(255,255,255));
+									
+										oval.setFrame(Float.floatToIntBits((float)midPoint.x()-insideRadius),
+												Float.floatToIntBits((float)midPoint.y()-insideRadius),
+												2*insideRadius, 2*insideRadius);
+		//								paint.createContext(arg0, arg1, arg2, arg3, arg4)
+										g2.setPaint(new GradientPaint(0,0,Color.GREEN,2000, 0,Color.WHITE));
+										g2.fill(oval);
+										firstPointDrawn = true;
+									}
+									
+									g2.setStroke(new BasicStroke(1));
+									int shader = 0;
+									int maxDist = 80;
+									int minDist = 35;
+									
+									
+									if(drawMesh){
+										switch (renderCount){
+											case 0:
+												shader = Math.abs((int) ((length0 * 255 / (minDist-maxDist)) - maxDist*255/(minDist-maxDist))%255);
+												g2.setColor(new Color(shader,shader,shader));
+												break;
 											
-										default:
-											break;
-									}	
-									g2.drawLine(Float.floatToIntBits((float)point0.x()),
-											Float.floatToIntBits((float)point0.y()),
-											Float.floatToIntBits((float)point1.x()), 
-											Float.floatToIntBits((float)point1.y()));
-									g2.drawLine(Float.floatToIntBits((float)point1.x()), 
-											Float.floatToIntBits((float)point1.y()), 
-											Float.floatToIntBits((float)point2.x()),
-											Float.floatToIntBits((float)point2.y()));
-									g2.drawLine(Float.floatToIntBits((float)point2.x()),
-											Float.floatToIntBits((float)point2.y()),
-											Float.floatToIntBits((float)point3.x()), 
-											Float.floatToIntBits((float)point3.y()));
-									g2.drawLine(Float.floatToIntBits((float)point3.x()),
-											Float.floatToIntBits((float)point3.y()),
-											Float.floatToIntBits((float)point0.x()),
-											Float.floatToIntBits((float)point0.y()));
-	
-								} 
-								if(this.fillObjects && vo instanceof Cube){
-									int[] xpoints = {Float.floatToIntBits((float)point0.x()),
-											Float.floatToIntBits((float)point1.x()),
-											Float.floatToIntBits((float)point2.x()),
-											Float.floatToIntBits((float)point3.x())};
-									int[] ypoints = {Float.floatToIntBits((float)point0.y()),
-											Float.floatToIntBits((float)point1.y()),
-											Float.floatToIntBits((float)point2.y()),
-											Float.floatToIntBits((float)point3.y())};
-									Polygon polygon = new Polygon(xpoints, ypoints, 4);
-									g2.setPaint(new GradientPaint(0,0,Color.RED,2000, 0,Color.WHITE));
-									g2.fill(polygon);
+											case 1:
+												shader = Math.abs((int) ((length1 * 255 / (minDist-maxDist)) - maxDist*255/(minDist-maxDist))%255);
+												g2.setColor(new Color(shader,shader,(int) (shader/2.0)));
+												break;
+											
+											case 2:
+												shader = Math.abs((int) ((length2 * 255 / (minDist-maxDist)) - maxDist*255/(minDist-maxDist))%255);
+												g2.setColor(new Color(shader,shader,(int) (shader/4.0)));
+												break;
+											
+											case 3:
+												shader = Math.abs((int) ((length3 * 255 / (minDist-maxDist)) - maxDist*255/(minDist-maxDist))%255);
+												g2.setColor(new Color(shader,shader,(int) (shader/8.0)));
+												break;
+												
+											default:
+												break;
+										}	
+										g2.drawLine(Float.floatToIntBits((float)point0.x()),
+												Float.floatToIntBits((float)point0.y()),
+												Float.floatToIntBits((float)point1.x()), 
+												Float.floatToIntBits((float)point1.y()));
+										g2.drawLine(Float.floatToIntBits((float)point1.x()), 
+												Float.floatToIntBits((float)point1.y()), 
+												Float.floatToIntBits((float)point2.x()),
+												Float.floatToIntBits((float)point2.y()));
+										g2.drawLine(Float.floatToIntBits((float)point2.x()),
+												Float.floatToIntBits((float)point2.y()),
+												Float.floatToIntBits((float)point3.x()), 
+												Float.floatToIntBits((float)point3.y()));
+										g2.drawLine(Float.floatToIntBits((float)point3.x()),
+												Float.floatToIntBits((float)point3.y()),
+												Float.floatToIntBits((float)point0.x()),
+												Float.floatToIntBits((float)point0.y()));
+		
+									} 
+									if(this.fillObjects && vo instanceof Cube){
+										int[] xpoints = {Float.floatToIntBits((float)point0.x()),
+												Float.floatToIntBits((float)point1.x()),
+												Float.floatToIntBits((float)point2.x()),
+												Float.floatToIntBits((float)point3.x())};
+										int[] ypoints = {Float.floatToIntBits((float)point0.y()),
+												Float.floatToIntBits((float)point1.y()),
+												Float.floatToIntBits((float)point2.y()),
+												Float.floatToIntBits((float)point3.y())};
+										Polygon polygon = new Polygon(xpoints, ypoints, 4);
+										g2.setPaint(new GradientPaint(0,0,Color.RED,2000, 0,Color.WHITE));
+										g2.fill(polygon);
+									}
 								}
 							}
 						}

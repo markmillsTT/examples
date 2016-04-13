@@ -1,10 +1,12 @@
 package Controller;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import Helpers.Vector3f;
+import Model.CoordinateSystem;
 import Model.ModelGlassInt;
-import Model.ViewableObject;
 import View.ViewGlassInt;
 
 /**
@@ -42,8 +44,11 @@ public final class ControllerGlass implements ControllerGlassInt {
 		view.startRepaintFlashTimer();
 	}
 
+	/***
+	 * Returns Copy of Live Model Data
+	 */
 	@Override
-	public Map<Vector3f, ViewableObject> getCurrentSceneObjects() {
+	public Map<Vector3f, CoordinateSystem> getCurrentSceneObjects() {
 		
 		int switchTimeMS 	= 4000; 	// in milliseconds
 		long loopTimeMS 	= 10000;	// in milliseconds
@@ -60,7 +65,22 @@ public final class ControllerGlass implements ControllerGlassInt {
 		}
 		
 		model.loadMotionSystem(this.currentScene, (float) (Math.PI/(1024)));
-		return model.getObjectLocationsForScene(local_currentScene);
+		
+		Map<Vector3f, CoordinateSystem> updatingModelData = model.getObjectLocationsForScene(local_currentScene);
+		if(updatingModelData.isEmpty())
+			return null;
+		
+		Map<Vector3f, CoordinateSystem> updatingModelDataCopy = new HashMap<Vector3f, CoordinateSystem>();
+		Iterator<Vector3f> keySet = updatingModelData.keySet().iterator();
+		
+		synchronized(this){
+			
+			while(keySet.hasNext()){
+				Vector3f dist = keySet.next();
+				updatingModelDataCopy.put(dist, updatingModelData.get(dist) );
+			}
+		}
+		return updatingModelDataCopy;
 	}
 
 }

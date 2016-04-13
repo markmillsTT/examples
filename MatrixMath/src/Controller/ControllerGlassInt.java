@@ -3,7 +3,7 @@ package Controller;
 import java.util.Map;
 
 import Helpers.Vector3f;
-import Model.ViewableObject;
+import Model.CoordinateSystem;
 
 /**
  * Controller interface.
@@ -18,7 +18,7 @@ public interface ControllerGlassInt {
 
 	void begin();
 
-	Map<Vector3f, ViewableObject> getCurrentSceneObjects();
+	Map<Vector3f, CoordinateSystem> getCurrentSceneObjects();
 
    
 }
