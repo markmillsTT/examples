@@ -11,9 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.vecmath.*;
-
-import View.ViewGlass;
+import Helpers.Matrix4x4f;
+import Helpers.Vector3f;
 import View.ViewGlassInt;
 
 /**
@@ -26,7 +25,7 @@ import View.ViewGlassInt;
 public final class ModelGlass implements ModelGlassInt {
 	
 	List<CoordinateSystem> allCoords = new ArrayList<CoordinateSystem>();
-	Map<Integer,Map<Vector3d,Shape>> allGlassPaneVectData = new HashMap<Integer,Map<Vector3d, Shape>>();
+	Map<Integer,Map<Vector3f,Shape>> allGlassPaneVectData = new HashMap<Integer,Map<Vector3f, Shape>>();
 	private long startTime;
 	
     public ModelGlass() {
@@ -35,7 +34,7 @@ public final class ModelGlass implements ModelGlassInt {
     	for(int i = 0 ; i < 5 ; i++){
     		for(int k = 1 ; k < 2 ; k++){
     			csHold = new CoordinateSystem(i);
-    			csHold.setDistanceVectorFromOrg(new Vector3d(-15+7.5*i, -5 +5*k, 40));
+    			csHold.setDistanceVectorFromOrg(new Vector3f((float)(-15+7.5*i), -5 +5*k, 40));
     			SwirlDroplet droplet = new SwirlDroplet(csHold);
 	    		allCoords.add(csHold);
     		}
@@ -63,9 +62,9 @@ public final class ModelGlass implements ModelGlassInt {
 	 * @return
 	 */
 	private void get2DShapeProjectionForViewableObject(ViewableModel vo,
-			List<Vector3d> positionVectorsInOCS,
-			List<Vector3d> distVectorsToViewables,Map<Vector3d, Shape> shapeMap,
-			Dimension drawingBoundsForPort, List<Matrix4d> transforms) {
+			List<Vector3f> positionVectorsInOCS,
+			List<Vector3f> distVectorsToViewables,Map<Vector3f, Shape> shapeMap,
+			Dimension drawingBoundsForPort, List<Matrix4x4f> transforms) {
 		
 		Rectangle2D rect;
 		int x = 0,y = 0,width = 0,height = 0;
@@ -77,36 +76,38 @@ public final class ModelGlass implements ModelGlassInt {
 		}
 	
 		//draw dot
-		Vector3d origin = new Vector3d(distVectorsToViewables.get(0));
+		Vector3f origin = new Vector3f(distVectorsToViewables.get(0));
 		origin.sub(positionVectorsInOCS.get(0));
-		Vector3d pixVector = mapVectorToPixelVector(origin,drawingBoundsForPort);
-	//	shapeMap.put(origin,new Ellipse2D.Double((int) pixVector.getX()-10, (int) pixVector.getY()-10, 10, 10));
+		Vector3f pixVector = mapVectorToPixelVector(origin,drawingBoundsForPort);
+	//	shapeMap.put(origin,new Ellipse2D.Double((int) pixVector.x()-10, (int) pixVector.y()-10, 10, 10));
 		/* remember -- screen uses x y --> positive going right then down on computer screen
 		 * ... say middle of screen is at point (0,0,.5) (.5 meters back from user) 
 		 * 	after getting x,y,z in this system --> translate to computer system*/
 		
 		for(int i = 0; i < distVectorsToViewables.size(); i ++){
-			Vector3d point = distVectorsToViewables.get(i);
-			Vector3d topLeft = new Vector3d(point);
-			Vector3d topRight = new Vector3d(point);
+			Vector3f point = distVectorsToViewables.get(i);
+			Vector3f topLeft = new Vector3f(point);
+			Vector3f topRight = new Vector3f(point);
 			
 			if(vo instanceof SwirlDroplet){
 				SwirlDroplet sd = (SwirlDroplet)vo;
 				double cubeRadius = sd.getSphereRadius();
 				//top left corner of each cube center for projection... say cube radius = .5 meters
 				// LOOKS LIKE POST-IT ON TOP LEFT CORNER OF CUBE... WITH SAME AREA AS FACE... tehe
-				topLeft.add(new Vector3d(-cubeRadius,cubeRadius,-cubeRadius));
-				topRight.add(new Vector3d(cubeRadius,cubeRadius,-cubeRadius));
+				topLeft.add(new Vector3f((float)(-cubeRadius),
+						(float)(cubeRadius),
+						(float)(-cubeRadius)));
+				topRight.add(new Vector3f((float)cubeRadius,(float)cubeRadius,(float)(-cubeRadius)));
 				/* Apply transforms if they exist */
 				if(transforms != null){
 					topLeft = applyTransforms(topLeft,transforms);
 					topRight = applyTransforms(topRight,transforms);
 				}
-				Vector3d pixVectorLeft = mapVectorToPixelVector(topLeft,drawingBoundsForPort);
-				Vector3d pixVectorRight = mapVectorToPixelVector(topRight,drawingBoundsForPort);
+				Vector3f pixVectorLeft = mapVectorToPixelVector(topLeft,drawingBoundsForPort);
+				Vector3f pixVectorRight = mapVectorToPixelVector(topRight,drawingBoundsForPort);
 				
-				x = (int) pixVectorLeft.getX();
-				y = (int) pixVectorLeft.getY();
+				x = (int) pixVectorLeft.x();
+				y = (int) pixVectorLeft.y();
 				
 				pixVectorRight.sub(pixVectorLeft);
 				width = (int) pixVectorRight.length();
@@ -114,15 +115,15 @@ public final class ModelGlass implements ModelGlassInt {
 				
 			} else if (vo instanceof FaceShape){
 				FaceShape fs = (FaceShape)vo;
-				Vector3f posVect = fs.getXYZPositionVector();
+//				Vector3f posVect = fs.xYZPositionVector();
 				//top front left corner of rectangular shape 
-				topLeft.add(new Vector3d(posVect.x,posVect.y,-posVect.z));
-				topRight.add(new Vector3d(-posVect.x,posVect.y,-posVect.z));
-				Vector3d pixVectorLeft = mapVectorToPixelVector(topLeft,drawingBoundsForPort);
-				Vector3d pixVectorRight = mapVectorToPixelVector(topRight,drawingBoundsForPort);
+//				topLeft.add(new Vector3f(posVect.x(),posVect.y(),-posVect.z()));
+//				topRight.add(new Vector3f(-posVect.x(),posVect.y(),-posVect.z()));
+				Vector3f pixVectorLeft = mapVectorToPixelVector(topLeft,drawingBoundsForPort);
+				Vector3f pixVectorRight = mapVectorToPixelVector(topRight,drawingBoundsForPort);
 				
-				x = (int) pixVectorLeft.getX();
-				y = (int) pixVectorLeft.getY();
+				x = (int) pixVectorLeft.x();
+				y = (int) pixVectorLeft.y();
 				
 				pixVectorRight.sub(pixVectorLeft);
 				width = (int) pixVectorRight.length();
@@ -133,15 +134,21 @@ public final class ModelGlass implements ModelGlassInt {
 				shapeMap.put(point,new Ellipse2D.Double(x,y,width,height));
 		}	
 	}
-	private Vector3d applyTransforms(Vector3d vector, List<Matrix4d> transforms) {
+	private Vector3f applyTransforms(Vector3f vector, List<Matrix4x4f> transforms) {
 		for(int k = transforms.size() - 1; k >= 0 ; k--){
-			Matrix4d holderMatrix = new Matrix4d();
-			holderMatrix.setM00(vector.x);	holderMatrix.setM01(0);			holderMatrix.setM02(0);			holderMatrix.setM03(0);
-			holderMatrix.setM11(0);			holderMatrix.setM11(vector.y);	holderMatrix.setM12(0);			holderMatrix.setM13(0);
-			holderMatrix.setM20(0);			holderMatrix.setM21(0);			holderMatrix.setM22(vector.z);	holderMatrix.setM23(0);
-			holderMatrix.setM30(0);			holderMatrix.setM31(0);			holderMatrix.setM32(0);			holderMatrix.setM33(1);
-			holderMatrix.mul(transforms.get(k));
-			vector = new Vector3d(holderMatrix.m00, holderMatrix.m11, holderMatrix.m22);
+			Matrix4x4f holderMatrix = new Matrix4x4f();
+			holderMatrix.setMatrix(
+					vector.x(), 0, 0, 0,
+					0, vector.y(), 0, 0,
+					0, 0, vector.z(), 0,
+					0, 0, 0, 0);
+			
+			float[][] holderMatrix2DArray = holderMatrix.getMatrixAs2DFloatArray();
+			vector = new Vector3f(
+					holderMatrix2DArray[0][0],
+					holderMatrix2DArray[1][1],
+					holderMatrix2DArray[2][2]);
+			
 		}
 		return vector;
 	}
@@ -153,37 +160,40 @@ public final class ModelGlass implements ModelGlassInt {
 	 * @param drawingBoundsForPort 
 	 * @return
 	 */
-	private Vector3d mapVectorToPixelVector(Vector3d origin, Dimension drawingBoundsForPort) {
-		Vector3d pixVector = new Vector3d(origin);
+	private Vector3f mapVectorToPixelVector(Vector3f origin, Dimension drawingBoundsForPort) {
+		Vector3f pixVector = new Vector3f(origin);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		
 		//scale to screen (.5 meters away)
-		pixVector.scale(.5f/pixVector.getZ());
+		pixVector.scale(.5f/pixVector.z());
 		//move grid system to match computers
-		pixVector.setY(-1f*pixVector.getY());
+		pixVector.setY(-1f*pixVector.y());
 		//scale to pixels
-		pixVector.setX(pixVector.getX() * screenSize.getWidth()/.34); // meter vector * pixel/meter .. topLeft = <pixel,pixel,meter>
-		pixVector.setY(pixVector.getY() * screenSize.getHeight()/.19);
-		pixVector.add(new Vector3d(drawingBoundsForPort.width/2.0,drawingBoundsForPort.height/2.0,0));
+		pixVector.setX((float)(pixVector.x() * screenSize.getWidth()/.34)); // meter vector * pixel/meter .. topLeft = <pixel,pixel,meter>
+		pixVector.setY((float)(pixVector.y() * screenSize.getHeight()/.19));
+		pixVector.add(new Vector3f(
+				(float)(drawingBoundsForPort.width/2.0),
+				(float)(drawingBoundsForPort.height/2.0),
+				(float)(drawingBoundsForPort.height)));
 		return pixVector;
 	}
 
 	@Override
-	public Map<Vector3d, Shape> getAllCurrentParallel2DScreenProjections(Dimension viewPortDimensions, int id) {
+	public Map<Vector3f, Shape> getAllCurrentParallel2DScreenProjections(Dimension viewPortDimensions, int id) {
 		return getAllCurrentCamera2DScreenProjections(viewPortDimensions,id,null);
 	}
 	
 	@Override
-	public Map<Vector3d,Shape> getAllCurrentCamera2DScreenProjections(Dimension drawingBoundsForPort, int glassPaneId, List<Matrix4d> transforms) {
+	public Map<Vector3f,Shape> getAllCurrentCamera2DScreenProjections(Dimension drawingBoundsForPort, int glassPaneId, List<Matrix4x4f> transforms) {
 		if(!allGlassPaneVectData.containsKey(glassPaneId)){
-			allGlassPaneVectData.put(glassPaneId,new HashMap<Vector3d, Shape>());
+			allGlassPaneVectData.put(glassPaneId,new HashMap<Vector3f, Shape>());
 		}
-		Map<Vector3d, Shape> shapeMap = allGlassPaneVectData.get(glassPaneId);
-		List<Vector3d> distVectorsToViewables = new ArrayList<Vector3d>();
+		Map<Vector3f, Shape> shapeMap = allGlassPaneVectData.get(glassPaneId);
+		List<Vector3f> distVectorsToViewables = new ArrayList<Vector3f>();
 		List<ViewableModel> viewables;
-		Vector3d distanceVectorFromOrg,hold;
+		Vector3f distanceVectorFromOrg,hold;
 		ViewableModel vo;
-		List<Vector3d> positionVectorsInOCS;
+		List<Vector3f> positionVectorsInOCS;
 		
 		/* get all things that need to be drawn for every coordinate system in model -- get their distance vectors*/
 		for(int i = 0; i < allCoords.size(); i++){
@@ -197,8 +207,9 @@ public final class ModelGlass implements ModelGlassInt {
 				/* each patten can have multiple things that need to be drawn -- ie: a cube could have 8 vertices*/
 				for(int z = 0; z < positionVectorsInOCS.size(); z++){
 					/* green arrow plus blue and red arrow in documentation*/
-					hold = new Vector3d();
-					hold.add(positionVectorsInOCS.get(z), distanceVectorFromOrg);
+					hold = new Vector3f();
+					hold.add(positionVectorsInOCS.get(z));
+					hold.add(distanceVectorFromOrg);
 					distVectorsToViewables.add(hold);
 				}
 				/* this method decides how to assign screen shapes based on the viewable object's position data*/
@@ -235,36 +246,34 @@ public final class ModelGlass implements ModelGlassInt {
 	
 
 	@Override
-	public Map<Vector3d, Shape> getAllCurrentCamera2DScreenProjections(
+	public Map<Vector3f, Shape> getAllCurrentCamera2DScreenProjections(
 			Dimension drawingBoundsForPort, int id) {
 		// TODO Calculate Rotation THEN offset Matricies to left multiply then Pass in list named transforms
-		List<Matrix4d> transforms = new ArrayList<Matrix4d>();
+		List<Matrix4x4f> transforms = new ArrayList<Matrix4x4f>();
 		transforms.add(0,getRotationMatrixAroundZAxis(3.0*Math.PI/4.0));
-		transforms.add(0,getOffsetMatrix(new Vector3d(0,0,20)));
+		transforms.add(0,getOffsetMatrix(new Vector3f(0,0,20)));
 		return getAllCurrentCamera2DScreenProjections(drawingBoundsForPort,id,transforms);
 	}
 
-	private Matrix4d getOffsetMatrix(Vector3d xyzOffset) {
-		Matrix4d offsetMatrix = new Matrix4d();
-		offsetMatrix.setM00(1);offsetMatrix.setM01(0);offsetMatrix.setM02(0);offsetMatrix.setM03(xyzOffset.x);
-		offsetMatrix.setM11(0);offsetMatrix.setM11(1);offsetMatrix.setM12(0);offsetMatrix.setM13(xyzOffset.y);
-		offsetMatrix.setM20(0);offsetMatrix.setM21(0);offsetMatrix.setM22(1);offsetMatrix.setM23(xyzOffset.z);
-		offsetMatrix.setM30(0);offsetMatrix.setM31(0);offsetMatrix.setM32(0);offsetMatrix.setM33(1);
+	private Matrix4x4f getOffsetMatrix(Vector3f xyzOffset) {
+		Matrix4x4f offsetMatrix = new Matrix4x4f();
+		offsetMatrix.setMatrixToIdentityMatrix();
 		return offsetMatrix;
 	}
 
-	private Matrix4d getRotationMatrixAroundZAxis(double theta) {
-		Matrix4d rotationMatrix = new Matrix4d();
-		rotationMatrix.setM00(Math.cos(theta));	rotationMatrix.setM01(Math.sin(theta));		rotationMatrix.setM02(0);			rotationMatrix.setM03(0);
-		rotationMatrix.setM11(-Math.sin(theta));rotationMatrix.setM11(Math.cos(theta));		rotationMatrix.setM12(0);			rotationMatrix.setM13(0);
-		rotationMatrix.setM20(0);				rotationMatrix.setM21(0);					rotationMatrix.setM22(1);	rotationMatrix.setM23(0);
-		rotationMatrix.setM30(0);				rotationMatrix.setM31(0);					rotationMatrix.setM32(0);			rotationMatrix.setM33(1);
+	private Matrix4x4f getRotationMatrixAroundZAxis(double theta) {
+		Matrix4x4f rotationMatrix = new Matrix4x4f();
+		rotationMatrix.setMatrix(
+				(float)(Math.cos(theta)), (float)(Math.sin(theta)), 0, 0,
+				(float)(-Math.sin(theta)), (float)(Math.cos(theta)),0,0,
+				0,0,1,0,
+				0,0,0,1);
 		return rotationMatrix;
 	}
 
 	@Override
 	public void clearDataMap(int glassPaneId) {
-		allGlassPaneVectData.put(glassPaneId,new HashMap<Vector3d, Shape>());
+		allGlassPaneVectData.put(glassPaneId,new HashMap<Vector3f, Shape>());
 	}
 
 }

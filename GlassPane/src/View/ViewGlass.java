@@ -2,43 +2,22 @@ package View;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Container;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.Shape;
-import java.awt.color.ColorSpace;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Semaphore;
 
-import javax.swing.InputMap;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JViewport;
-import javax.swing.KeyStroke;
 import javax.swing.Timer;
-import javax.swing.plaf.ViewportUI;
-import javax.vecmath.Vector3d;
-
-import components.sortingmachine.SortingMachine;
-import components.sortingmachine.SortingMachine1L;
 
 import Controller.ControllerGlassInt;
 import Helpers.AllActionListeners;
@@ -73,6 +52,17 @@ public final class ViewGlass extends JFrame implements ViewGlassInt {
     	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	
     	initializeView(this.getContentPane());
+    	
+    	AllActionListeners listener = new AllActionListeners(){
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getID() == KeyEvent.VK_P){
+					controller.toggleToParrellelView(69);
+				}
+			}
+		};
+		this.addKeyListener(listener);
+		
     }
 
 	private void initializeView(Container contentPane) {

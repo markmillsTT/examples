@@ -1,8 +1,8 @@
 package Model;
 
-import java.awt.Shape;
 import java.util.List;
-import javax.vecmath.*;
+
+import Helpers.Vector3f;
 
 public interface ViewableModel {
 
@@ -17,6 +17,6 @@ public interface ViewableModel {
 	 * @param t
 	 * @return
 	 */
-	public List<Vector3d> getAllPositionVectorsInOCS(long t);
+	public List<Vector3f> getAllPositionVectorsInOCS(long t);
 
 }

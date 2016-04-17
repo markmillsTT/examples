@@ -322,11 +322,6 @@ public final class ModelGlass implements ModelGlassInt {
     public long getStartTime(){
     	return this.startTime;
     }
-
-    public Matrix3f getIdentityMatrix(){
-    	Matrix3f matrix = new Matrix3f();
-    	return matrix;
-    }
     
 	@Override
     public void loadObjectLocation(int sceneNum, Vector3f dist1, CoordinateSystem coordSystem, int count){

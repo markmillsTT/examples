@@ -2,16 +2,13 @@ package Controller;
 
 import java.awt.Dimension;
 import java.awt.Shape;
-import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.vecmath.Vector3d;
-
+import Helpers.Vector3f;
 import Model.CoordinateSystem;
 import Model.ModelGlassInt;
-import Model.ViewableModel;
 import View.ViewGlassInt;
 
 /**
@@ -47,7 +44,7 @@ public final class ControllerGlass implements ControllerGlassInt {
 	}
     
 	@Override
-	public Map<Vector3d,Shape> getVectorsToProjMapToDraw(int id) {
+	public Map<Vector3f,Shape> getVectorsToProjMapToDraw(int id) {
 		if(inParallelSpace)
 			return model.getAllCurrentParallel2DScreenProjections(view.getViewPortDimensions(), id);
 		//else in camera space by default
@@ -55,8 +52,8 @@ public final class ControllerGlass implements ControllerGlassInt {
 	}
 	
 	@Override
-	public List<Vector3d> getAllCoordPositions(){
-		List<Vector3d> retVal = new ArrayList<Vector3d>();
+	public List<Vector3f> getAllCoordPositions(){
+		List<Vector3f> retVal = new ArrayList<Vector3f>();
 		List<CoordinateSystem> allCoordSystems = model.getAllCoordSystems();
 		for(int i = 0; i < allCoordSystems.size(); i ++){
 			retVal.add(allCoordSystems.get(i).getDistanceVectorFromOrg());

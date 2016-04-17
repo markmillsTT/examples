@@ -1,10 +1,9 @@
 package Model;
 
-import java.awt.Shape;
-import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.List;
-import javax.vecmath.*;
+
+import Helpers.Vector3f;
 
 /**
  * In Vector space of coord system
@@ -29,9 +28,9 @@ public class FaceShape implements ViewableModel {
 		this.objCoordSystem.addToViewables(this);
 		this.cubeRadius = .05f;
 		this.swirlPeriod = 100; //in milisec
-		width = maxVector.x - minVector.x;
-		height = maxVector.y - minVector.y;
-		depth = maxVector.z - minVector.z;
+		width = maxVector.x() - minVector.x();
+		height = maxVector.y() - minVector.y();
+		depth = maxVector.z() - minVector.z();
 	}
 
 	/**
@@ -44,19 +43,19 @@ public class FaceShape implements ViewableModel {
 	 * 
 	 */
 	@Override
-	public List<Vector3d> getAllPositionVectorsInOCS(long t) {
-		List<Vector3d> allGreenArrows = new ArrayList<Vector3d>();
-		Vector3d distVectInOCS;
+	public List<Vector3f> getAllPositionVectorsInOCS(long t) {
+		List<Vector3f> allGreenArrows = new ArrayList<Vector3f>();
+		Vector3f distVectInOCS;
 		float x,y,z;
 		double omegaT;
 		//four second theta period
 		omegaT = 2.0*Math.PI*t/this.swirlPeriod ;
 		
-		x = positionVector.x;
-		y = positionVector.y;
-		z = positionVector.z;
+		x = positionVector.x();
+		y = positionVector.y();
+		z = positionVector.z();
 		
-		distVectInOCS = new Vector3d(x, y, z); //green arrow in Level 1 part B
+		distVectInOCS = new Vector3f(x, y, z); //green arrow in Level 1 part B
 		allGreenArrows.add(distVectInOCS);
 		return allGreenArrows;
 	}

@@ -1,39 +1,42 @@
 package View;
 
 import java.awt.Color;
-import java.awt.CompositeContext;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
-import javax.swing.JPanel;
-import javax.vecmath.Vector3d;
 
-import Controller.ControllerGlass;
+import javax.swing.JPanel;
+
 import Controller.ControllerGlassInt;
-import components.sortingmachine.SortingMachine;
-import components.sortingmachine.SortingMachine1L;
+import Helpers.AllActionListeners;
+import Helpers.Vector3f;
 
 public class GlassPanel extends JPanel {
 		
-		Map<Vector3d,Shape> allShapesToDraw;
+		Map<Vector3f,Shape> allShapesToDraw;
 		int panelID;//****** MUST BE UNIQUE FOR EVERY PANEL ****
 		ControllerGlassInt controller;
+		int framesToKeepPaint = 5;
 		boolean showFarthestFirst = false;
-		int[] colorVBO = {0, 20, 0 , 20 , 50, 20}; //color Virtual Buffer Object
+		int[] colorVBO = {0, 50, 150 , 150 , 200, 200}; //color Virtual Buffer Object
 		
 		public GlassPanel(int panelNum,ControllerGlassInt controller){
 			this.panelID = panelNum;
 			this.controller = controller;
+			AllActionListeners listener = new AllActionListeners(){
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if(e.getID() == KeyEvent.VK_P){
+						controller.toggleToParrellelView(panelID);
+					}
+				}
+			};
+			this.addKeyListener(listener);
 		}
 		
 		@Override
@@ -50,52 +53,55 @@ public class GlassPanel extends JPanel {
 				controller = ViewGlass.controller;
 			else if(flashRedraw){
 				allShapesToDraw = controller.getVectorsToProjMapToDraw(panelID);		
-				Iterator<Vector3d> centerOfDrawnShapes = allShapesToDraw.keySet().iterator();
-				SortingMachine<Vector3d> layerOrder = new SortingMachine1L<Vector3d>(new Comparator<Vector3d>() {
-							@Override
-							public int compare(Vector3d v1, Vector3d v2) {
-								int retVal;
-								if(showFarthestFirst){
-									retVal = -1;
-									if(v1.length() > v2.length())
-										retVal = 1;
-									else if(v1.length() == v2.length())
-										retVal = 0;
-								} else {
-									retVal = 1;
-									if(v1.length() > v2.length())
-										retVal = -1;
-									else if(v1.length() == v2.length())
-										retVal = 0;
-								}
-								return retVal;
-							}
-				});
+				Iterator<Vector3f> centerOfDrawnShapes = allShapesToDraw.keySet().iterator();
+//				SortingMachine<Vector3f> layerOrder = new SortingMachine1L<Vector3f>(new Comparator<Vector3f>() {
+//							@Override
+//							public int compare(Vector3f v1, Vector3f v2) {
+//								int retVal;
+//								if(showFarthestFirst){
+//									retVal = -1;
+//									if(v1.length() > v2.length())
+//										retVal = 1;
+//									else if(v1.length() == v2.length())
+//										retVal = 0;
+//								} else {
+//									retVal = 1;
+//									if(v1.length() > v2.length())
+//										retVal = -1;
+//									else if(v1.length() == v2.length())
+//										retVal = 0;
+//								}
+//								return retVal;
+//							}
+//				});
+//				
+//				while(centerOfDrawnShapes.hasNext()){
+//					layerOrder.add(centerOfDrawnShapes.next());	
+//				}
+//				layerOrder.changeToExtractionMode();
+//				Iterator<Vector3f> farthestFirst = layerOrder.iterator();
 				
+//				while(farthestFirst.hasNext()){
+//					Vector3f center = farthestFirst.next();
+//					
 				while(centerOfDrawnShapes.hasNext()){
-					layerOrder.add(centerOfDrawnShapes.next());	
-				}
-				layerOrder.changeToExtractionMode();
-				Iterator<Vector3d> farthestFirst = layerOrder.iterator();
-				
-				while(farthestFirst.hasNext()){
-					Vector3d center = farthestFirst.next();
+					Vector3f center = centerOfDrawnShapes.next();
 					
 					if(allShapesToDraw.get(center) instanceof Ellipse2D.Double){
 						//map <x,y,z> to <r,g,b> ... A(X) = Y 
-						Vector3d colorTrnsFrmResult = new Vector3d();
-						/* A(x) = 255.0/(5.0)*center.getX()+255.0/(2.0)  		-5 <= x,y <= 5
-						 * A(y) = 255.0/(5.0)*center.getY()+255.0/(2.0)			22.5 <= z <= 27.5
-						 * A(z) = 255.0/(5.0)*center.getZ()-255.0*22.5/(5.0)		diameter = (5.0)
+						Vector3f colorTrnsFrmResult = new Vector3f();
+						/* A(x) = 255.0/(5.0)*center.x()+255.0/(2.0)  		-5 <= x,y <= 5
+						 * A(y) = 255.0/(5.0)*center.y()+255.0/(2.0)			22.5 <= z <= 27.5
+						 * A(z) = 255.0/(5.0)*center.z()-255.0*22.5/(5.0)		diameter = (5.0)
 						 */
-						colorTrnsFrmResult.setX(255.0 - Math.abs(center.getX() - colorVBO[0]) * 255.0/colorVBO[1]);
-						colorTrnsFrmResult.setY(255.0 - Math.abs(center.getY() - colorVBO[2]) * 255.0/colorVBO[3]);
-						colorTrnsFrmResult.setZ(255.0 - Math.abs(center.getZ() - colorVBO[4]) * 255.0/colorVBO[5]);
-						if(colorTrnsFrmResult.x >= 0 && colorTrnsFrmResult.y >= 0 && colorTrnsFrmResult.z >= 0 &&
-								colorTrnsFrmResult.x < 256 && colorTrnsFrmResult.y < 256 && colorTrnsFrmResult.z < 256){
-								g2.setColor(new Color((int)colorTrnsFrmResult.getX(),(int)colorTrnsFrmResult.getY(),(int)colorTrnsFrmResult.getZ()));
+						colorTrnsFrmResult.setX((float)(255.0 - Math.abs(center.x() - colorVBO[0]) * 255.0/colorVBO[1]));
+						colorTrnsFrmResult.setY((float)(255.0 - Math.abs(center.y() - colorVBO[2]) * 255.0/colorVBO[3]));
+						colorTrnsFrmResult.setZ((float)(255.0 - Math.abs(center.z() - colorVBO[4]) * 255.0/colorVBO[5]));
+						if(colorTrnsFrmResult.x() >= 0 && colorTrnsFrmResult.y() >= 0 && colorTrnsFrmResult.z() >= 0 &&
+								colorTrnsFrmResult.x() < 256 && colorTrnsFrmResult.y() < 256 && colorTrnsFrmResult.z() < 256){
+								g2.setColor(new Color((int)colorTrnsFrmResult.x(),(int)colorTrnsFrmResult.y(),(int)colorTrnsFrmResult.z()));
 						}
-						else if(center.getZ() < 0) // virtual image
+						else if(center.z() < 0) // virtual image
 							g2.setColor(Color.BLACK);
 						else //just far into picture
 							g2.setColor(Color.WHITE);

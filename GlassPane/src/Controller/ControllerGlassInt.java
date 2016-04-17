@@ -5,7 +5,7 @@ import java.awt.Shape;
 import java.util.List;
 import java.util.Map;
 
-import javax.vecmath.Vector3d;
+import Helpers.Vector3f;
 
 /**
  * Controller interface.
@@ -20,9 +20,9 @@ public interface ControllerGlassInt {
 
 	void begin();
 
-	Map<Vector3d, Shape> getVectorsToProjMapToDraw(int panelNum);
+	Map<Vector3f, Shape> getVectorsToProjMapToDraw(int panelNum);
 
-	List<Vector3d> getAllCoordPositions();
+	List<Vector3f> getAllCoordPositions();
 
 	Dimension viewPortDims();
 
