@@ -63,8 +63,8 @@ public class SwirlDroplet implements ViewableModel {
 		sp = getSwirlPattern1(omegaT);
 //		sp = getSwirlPattern2(omegaT);
 //		sp = getSwirlPattern3(omegaT);
-//		sp.addAll(getSwirlPattern2(omegaT));
-//		sp.addAll(getSwirlPattern3(omegaT));
+		sp.addAll(getSwirlPattern2(omegaT));
+		sp.addAll(getSwirlPattern3(omegaT));
 		return sp;
 	}
 	
@@ -90,7 +90,7 @@ public class SwirlDroplet implements ViewableModel {
 			float x,y,z;
 			x = (float) (swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i])*swirlRadius*Math.cos(omegaT/2.0+dropletThetaPhasesOCS[i]));
 			y = (float) (swirlRadius*Math.tan(omegaT+dropletThetaPhasesOCS[i]));
-			z = (float) (swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i])*swirlRadius*Math.cos(omegaT/2.0+dropletThetaPhasesOCS[i]));
+			z = (float) (30f+swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i])*swirlRadius*Math.cos(omegaT/2.0+dropletThetaPhasesOCS[i]));
 			distVectInOCS = new Vector3f(x, y, z); //green arrow in Level 1 part B
 			allGreenArrows.add(distVectInOCS);
 		}

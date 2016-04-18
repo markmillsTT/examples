@@ -23,7 +23,7 @@ public class GlassPanel extends JPanel {
 		ControllerGlassInt controller;
 		int framesToKeepPaint = 5;
 		boolean showFarthestFirst = false;
-		int[] colorVBO = {0, 50, 150 , 150 , 200, 200}; //color Virtual Buffer Object
+		int[] colorVBO = {0, 50, 150 , 255 , 200, 200}; //color Virtual Buffer Object
 		
 		public GlassPanel(int panelNum,ControllerGlassInt controller){
 			this.panelID = panelNum;
