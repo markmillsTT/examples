@@ -1,7 +1,15 @@
 package Model;
 
-public class Sphere implements ViewableObject {
+import java.util.ArrayList;
+import java.util.List;
 
+import Helpers.Vector3f;
+
+public class Sphere implements ViewableModel {
+
+	CoordinateSystem coordSystem = null;
+	List<Vector3f> allPositionVectorsInOCS = null;
+	
 	private float radius;
 	float[] sphereVerticies;
 	int[] sphereSurfaceTriangleIndicies;
@@ -12,7 +20,12 @@ public class Sphere implements ViewableObject {
 	 * @param width
 	 * @param layers - must be even and >=4
 	 */
-	public Sphere(float width, int layers, int numOfPointsPerRow){
+	public Sphere(float width, int layers, int numOfPointsPerRow, CoordinateSystem coordSystem){
+		
+		this.coordSystem = coordSystem;
+		this.coordSystem.addToViewables(this);
+		this.allPositionVectorsInOCS = new ArrayList<Vector3f>();
+		
 		layers = layers*2;
 		this.radius = width / 2.0f;
 //		int totalNumSquares = (int) (Math.pow(2,layers));
@@ -170,7 +183,8 @@ public class Sphere implements ViewableObject {
 		}
 		return sphereVerticiesHold;
 	}
-
+	
+/*
 	@Override
 	public float[] getVertexLocations() {
 		return this.sphereVerticies;
@@ -180,5 +194,40 @@ public class Sphere implements ViewableObject {
 	public int[] getVertexIndicies() {
 		return this.sphereSurfaceTriangleIndicies;
 	}
-	
+	*/
+
+	@Override
+	public CoordinateSystem getObjectCoordSystem() {
+		return this.coordSystem;
+	}
+
+	@Override
+	public List<Vector3f> getAllPositionVectorsInOCS(long time) {
+		
+		List<Vector3f> indexedPositionsToVectorInOCS = new ArrayList<Vector3f>();
+		
+		for(int i = 0; i < sphereSurfaceTriangleIndicies.length - 2; i+=3){
+			
+			Vector3f coordSystemLocation = coordSystem.getDistanceVectorFromOrg(time);
+			
+			float x = sphereVerticies[sphereSurfaceTriangleIndicies[i]];
+			float y = sphereVerticies[sphereSurfaceTriangleIndicies[i+1]];
+			float z = sphereVerticies[sphereSurfaceTriangleIndicies[i+2]];
+			
+			Vector3f locationAdjustedToCoordSystem = new Vector3f(
+					coordSystemLocation.x() + x,
+					coordSystemLocation.y() + y,
+					coordSystemLocation.z() + z);
+			
+			indexedPositionsToVectorInOCS.add(i/3, locationAdjustedToCoordSystem);
+		}
+		
+		this.allPositionVectorsInOCS = indexedPositionsToVectorInOCS;
+		
+		return this.allPositionVectorsInOCS;
+	}
+
+	public float getSphereRadius() {
+		return this.radius;
+	}
 }

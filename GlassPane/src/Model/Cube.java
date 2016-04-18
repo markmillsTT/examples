@@ -1,7 +1,15 @@
 package Model;
 
-public class Cube implements ViewableObject {
+import java.util.ArrayList;
+import java.util.List;
 
+import Helpers.Vector3f;
+
+public class Cube implements ViewableModel {
+
+	CoordinateSystem coordSystem = null;
+	List<Vector3f> allPositionVectorsInOCS = null;
+	
 	private float radius;
 	float[] cubeVerticies;
 	int[] cubeSurfaceTriangleIndicies = {
@@ -14,6 +22,10 @@ public class Cube implements ViewableObject {
 	};
 	
 	public Cube(float width){
+		
+		this.coordSystem = new CoordinateSystem(0);
+		this.allPositionVectorsInOCS = new ArrayList<Vector3f>();
+		
 		this.radius = width / 2.0f;
 		
 		float[] cubeVerticiesHold = {
@@ -30,7 +42,7 @@ public class Cube implements ViewableObject {
 		
 		this.cubeVerticies = cubeVerticiesHold;
 	}
-
+/*
 	@Override
 	public float[] getVertexLocations() {
 		return this.cubeVerticies;
@@ -39,6 +51,18 @@ public class Cube implements ViewableObject {
 	@Override
 	public int[] getVertexIndicies() {
 		return this.cubeSurfaceTriangleIndicies;
+	}
+
+	*/
+	@Override
+	public CoordinateSystem getObjectCoordSystem() {
+		return this.coordSystem;
+	}
+	
+
+	@Override
+	public List<Vector3f> getAllPositionVectorsInOCS(long t) {
+		return this.allPositionVectorsInOCS;
 	}
 	
 }

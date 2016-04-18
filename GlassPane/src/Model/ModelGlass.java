@@ -31,14 +31,35 @@ public final class ModelGlass implements ModelGlassInt {
     public ModelGlass() {
     	
     	CoordinateSystem csHold;
-    	for(int i = 0 ; i < 5 ; i++){
-    		for(int k = 1 ; k < 2 ; k++){
-    			csHold = new CoordinateSystem(i);
-    			csHold.setDistanceVectorFromOrg(new Vector3f((float)(-15+7.5*i), -5 +5*k, 40));
+    	double radius = 8.0;
+    	double zOffset = 40.0;
+    	int count = 0;
+    	
+    	for(double phi = 0 ; phi < 2.0*Math.PI ; phi += (2*Math.PI/ 4.0)){
+    		for(double theta = 1 ; theta < 2.0*Math.PI ; theta += (2*Math.PI/ 4.0)){
+    			csHold = new CoordinateSystem(count);
+    			csHold.setDistanceVectorFromOrg(new Vector3f(
+    					(float)(radius*Math.sin(theta)*Math.cos(phi)),
+    					(float)(radius*Math.sin(theta)*Math.sin(phi)),
+    					(float)(radius*Math.cos(theta) + zOffset)));
     			SwirlDroplet droplet = new SwirlDroplet(csHold);
+//    			Sphere sphere = new Sphere(4.0f, 4, 16, csHold);
 	    		allCoords.add(csHold);
+	    		count++;
     		}
     	}
+    	
+    	for(double theta = 1 ; theta < 2.0*Math.PI ; theta += (2*Math.PI/ 4.0)){
+			csHold = new CoordinateSystem(count);
+			csHold.setDistanceVectorFromOrg(new Vector3f(
+					(float)(radius*Math.sin(theta)*Math.cos(Math.PI/2.0)),
+					(float)(radius*Math.sin(theta)*Math.sin(Math.PI/2.0)),
+					(float)(radius*Math.cos(theta) + zOffset)));
+			SwirlDroplet droplet = new SwirlDroplet(csHold);
+//			Sphere sphere = new Sphere(4.0f, 4, 16, csHold);
+    		allCoords.add(csHold);
+    		count++;
+		}
     	
     }
     
@@ -70,8 +91,13 @@ public final class ModelGlass implements ModelGlassInt {
 		int x = 0,y = 0,width = 0,height = 0;
 		
 		// Don't add anything to map if it's full
-		if(shapeMap.size() > 40000){
+		if(shapeMap.size() > 4000){
 			shapeMap.clear();
+			return;
+		}
+		
+		//Only draw shapes if there are position vectors
+		if(positionVectorsInOCS.size() == 0){
 			return;
 		}
 	
@@ -89,9 +115,34 @@ public final class ModelGlass implements ModelGlassInt {
 			Vector3f topLeft = new Vector3f(point);
 			Vector3f topRight = new Vector3f(point);
 			
-			if(vo instanceof SwirlDroplet){
+			if(vo instanceof SwirlDroplet ){
 				SwirlDroplet sd = (SwirlDroplet)vo;
 				double cubeRadius = sd.getSphereRadius();
+				//top left corner of each cube center for projection... say cube radius = .5 meters
+				// LOOKS LIKE POST-IT ON TOP LEFT CORNER OF CUBE... WITH SAME AREA AS FACE... tehe
+				topLeft.add(new Vector3f((float)(-cubeRadius),
+						(float)(cubeRadius),
+						(float)(-cubeRadius)));
+				topRight.add(new Vector3f((float)cubeRadius,(float)cubeRadius,(float)(-cubeRadius)));
+				/* Apply transforms if they exist */
+				if(transforms != null){
+					topLeft = applyTransforms(topLeft,transforms);
+					topRight = applyTransforms(topRight,transforms);
+				}
+				Vector3f pixVectorLeft = mapVectorToPixelVector(topLeft,drawingBoundsForPort);
+				Vector3f pixVectorRight = mapVectorToPixelVector(topRight,drawingBoundsForPort);
+				
+				x = (int) pixVectorLeft.x();
+				y = (int) pixVectorLeft.y();
+				
+				pixVectorRight.sub(pixVectorLeft);
+				width = (int) pixVectorRight.length();
+				height = width;
+				
+			} else if (vo instanceof Sphere){
+				
+				Sphere sd = (Sphere)vo;
+				float cubeRadius = sd.getSphereRadius();
 				//top left corner of each cube center for projection... say cube radius = .5 meters
 				// LOOKS LIKE POST-IT ON TOP LEFT CORNER OF CUBE... WITH SAME AREA AS FACE... tehe
 				topLeft.add(new Vector3f((float)(-cubeRadius),

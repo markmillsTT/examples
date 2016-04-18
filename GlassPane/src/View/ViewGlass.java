@@ -38,7 +38,7 @@ public final class ViewGlass extends JFrame implements ViewGlassInt {
     public static final int GLASSPANE_WIDTH = 800;
     final static boolean RIGHT_TO_LEFT = true;
     public static boolean flashRedraw = false;
-    public static Color currentBackgroundColor = Color.BLACK;
+    public static Color currentBackgroundColor = new Color(0.1f,0.1f, 0.15f);
     
   //  JTextField inX;
 //    private JViewport vp;

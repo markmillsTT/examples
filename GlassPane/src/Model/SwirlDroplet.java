@@ -17,10 +17,10 @@ public class SwirlDroplet implements ViewableModel {
 	public SwirlDroplet(CoordinateSystem objCoordSystem){
 		this.objCoordSystem = objCoordSystem;
 		this.objCoordSystem.addToViewables(this);
-		this.numberDroplets = 128;
+		this.numberDroplets = 64;
 		this.dropletThetaPhasesOCS = new double[numberDroplets];
 		this.swirlRadius = 4.0;
-		this.sphereRadius = 0.08f;
+		this.sphereRadius = 0.06f;
 		for(int i = 0; i < numberDroplets; i++){
 			double thetaPhase = ((double)i)*2.0 * Math.PI / ((double)numberDroplets);
 		//	this.dropletThetaPhasesOCS[i] = new Vector3f((float)(swirlRadius* Math.sin(theta)), 0, (float) (swirlRadius*Math.cos(theta)));
@@ -74,9 +74,9 @@ public class SwirlDroplet implements ViewableModel {
 		Vector3f distVectInOCS = new Vector3f();
 		for(int i = 0 ; i < this.numberDroplets; i++){
 			float x,y,z;
-			x = (float) (3*swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i]/4.0)*swirlRadius*Math.cos(omegaT/4.0+dropletThetaPhasesOCS[i]));
-			y = (float) (4*swirlRadius*Math.cos(omegaT+dropletThetaPhasesOCS[i]));
-			z = (float) (40f+5*swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i]/8.0)*swirlRadius*Math.cos(omegaT/8.0+dropletThetaPhasesOCS[i]));
+			x = (float) (.4*swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i]/4.0)*swirlRadius*Math.cos(omegaT/4.0+dropletThetaPhasesOCS[i]));
+			y = (float) (.4*swirlRadius*Math.cos(omegaT+dropletThetaPhasesOCS[i]));
+			z = (float) (35f+.8*swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i]/8.0)*swirlRadius*Math.cos(omegaT/8.0+dropletThetaPhasesOCS[i]));
 			distVectInOCS = new Vector3f(x, y, z); //green arrow in Level 1 part B
 			allGreenArrows.add(distVectInOCS);
 		}
@@ -90,7 +90,7 @@ public class SwirlDroplet implements ViewableModel {
 			float x,y,z;
 			x = (float) (swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i])*swirlRadius*Math.cos(omegaT/2.0+dropletThetaPhasesOCS[i]));
 			y = (float) (swirlRadius*Math.tan(omegaT+dropletThetaPhasesOCS[i]));
-			z = (float) (30f+swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i])*swirlRadius*Math.cos(omegaT/2.0+dropletThetaPhasesOCS[i]));
+			z = (float) (30f+swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i])*swirlRadius*Math.cos(omegaT/4.0+dropletThetaPhasesOCS[i]));
 			distVectInOCS = new Vector3f(x, y, z); //green arrow in Level 1 part B
 			allGreenArrows.add(distVectInOCS);
 		}
