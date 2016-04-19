@@ -36,12 +36,12 @@ public final class ModelGlass implements ModelGlassInt {
     	int count = 0;
     	
     	for(double phi = 0 ; phi < 2.0*Math.PI ; phi += (2*Math.PI/ 4.0)){
-    		for(double theta = 1 ; theta < 2.0*Math.PI ; theta += (2*Math.PI/ 4.0)){
+    		for(double theta = 1 ; theta < 2.0*Math.PI ; theta += (2*Math.PI/ 8.0)){
     			csHold = new CoordinateSystem(count);
     			csHold.setDistanceVectorFromOrg(new Vector3f(
-    					(float)(radius*Math.sin(theta)*Math.cos(phi)),
-    					(float)(radius*Math.sin(theta)*Math.sin(phi)),
-    					(float)(radius*Math.cos(theta) + zOffset)));
+    					(float)(radius*Math.sin(theta)*Math.tan(phi)),
+    					(float)(radius*Math.sin(theta)*Math.tan(phi)),
+    					(float)(radius*Math.sin(theta) + zOffset)));
     			SwirlDroplet droplet = new SwirlDroplet(csHold);
 //    			Sphere sphere = new Sphere(4.0f, 4, 16, csHold);
 	    		allCoords.add(csHold);
@@ -49,17 +49,17 @@ public final class ModelGlass implements ModelGlassInt {
     		}
     	}
     	
-    	for(double theta = 1 ; theta < 2.0*Math.PI ; theta += (2*Math.PI/ 4.0)){
-			csHold = new CoordinateSystem(count);
-			csHold.setDistanceVectorFromOrg(new Vector3f(
-					(float)(radius*Math.sin(theta)*Math.cos(Math.PI/2.0)),
-					(float)(radius*Math.sin(theta)*Math.sin(Math.PI/2.0)),
-					(float)(radius*Math.cos(theta) + zOffset)));
-			SwirlDroplet droplet = new SwirlDroplet(csHold);
-//			Sphere sphere = new Sphere(4.0f, 4, 16, csHold);
-    		allCoords.add(csHold);
-    		count++;
-		}
+//    	for(double theta = 1 ; theta < 2.0*Math.PI ; theta += (2*Math.PI/ 4.0)){
+//			csHold = new CoordinateSystem(count);
+//			csHold.setDistanceVectorFromOrg(new Vector3f(
+//					(float)(radius*Math.sin(theta)*Math.cos(0)),
+//					(float)(radius*Math.sin(theta)*Math.sin(0)),
+//					(float)(radius*Math.cos(theta) + zOffset)));
+//			SwirlDroplet droplet = new SwirlDroplet(csHold);
+////			Sphere sphere = new Sphere(4.0f, 4, 16, csHold);
+//    		allCoords.add(csHold);
+//    		count++;
+//		}
     	
     }
     
@@ -91,7 +91,7 @@ public final class ModelGlass implements ModelGlassInt {
 		int x = 0,y = 0,width = 0,height = 0;
 		
 		// Don't add anything to map if it's full
-		if(shapeMap.size() > 4000){
+		if(shapeMap.size() > 40000){
 			shapeMap.clear();
 			return;
 		}
