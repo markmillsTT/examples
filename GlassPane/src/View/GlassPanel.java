@@ -23,8 +23,20 @@ public class GlassPanel extends JPanel {
 		ControllerGlassInt controller;
 		int framesToKeepPaint = 5;
 		boolean showFarthestFirst = false;
-		int[] colorVBO = {150, 255, 190 , 255 , 200, 255}; //color Virtual Buffer Object
 		
+		//Shape Colors
+		float[] colorVBO = {0, 255, 190 , 255 , 0, 255}; //color Virtual Buffer Object
+		float colorVBOXVel = 1;
+		float colorVBOYVel = -1;
+		float colorVBOZVel = 1;
+		
+		//Background Colors
+	    float backgroundColorRedVel = 0f;
+		float backgroundColorGreenVel = 0f;
+		float backgroundColorBlueVel = -1f;
+		
+//		Graphics2D globalGraphics;
+				
 		public GlassPanel(int panelNum,ControllerGlassInt controller){
 			this.panelID = panelNum;
 			this.controller = controller;
@@ -41,7 +53,16 @@ public class GlassPanel extends JPanel {
 		
 		@Override
 		protected void paintComponent(Graphics g) {
+			
 			Graphics2D g2 = (Graphics2D)g;
+			
+			updateColorVBO();
+			updateBackgroundColor();
+//			if(globalGraphics == null){
+//				globalGraphics = g2;
+//			} else {
+//				g2 = globalGraphics;
+//			}
 			
 			boolean flashRedraw = ViewGlass.flashRedraw;
 
@@ -120,6 +141,93 @@ public class GlassPanel extends JPanel {
 			}
 		}
 		
+		private void updateBackgroundColor() {
+			
+			float red = ViewGlass.currentBackgroundColor.getRed();
+			float green = ViewGlass.currentBackgroundColor.getGreen();
+			float blue = ViewGlass.currentBackgroundColor.getBlue();
+			
+			if(backgroundColorRedVel > 0 && red >= 255 ){
+				backgroundColorRedVel = -1 * backgroundColorRedVel;
+				red = 255;
+			} else if(backgroundColorRedVel < 0 && red <= 15 ){
+				backgroundColorRedVel = -1 * backgroundColorRedVel;
+				red = 10;
+			}
+			
+			if(backgroundColorGreenVel > 0 && green >= 255 ){
+				backgroundColorGreenVel = -1 * backgroundColorGreenVel;
+				green = 255;
+			} else if(backgroundColorGreenVel < 0 && green <= 15 ){
+				backgroundColorGreenVel = -1 * backgroundColorGreenVel;
+				green = 10;
+			}
+			
+			if(backgroundColorBlueVel > 0 && blue >= 255 ){
+				backgroundColorBlueVel = -1 * backgroundColorBlueVel;
+				blue = 255;
+			} else if(backgroundColorBlueVel < 0 && blue <= 15 ){
+				backgroundColorBlueVel = -1 * backgroundColorBlueVel;
+				blue = 10;
+			}
+			
+			red = red + backgroundColorRedVel;
+			green = green + backgroundColorGreenVel;
+			blue = blue + backgroundColorBlueVel;
+			
+			if(red > 255.0f){
+				red = 255.0f;
+			} else if (red < 0){
+				red = 0;
+			}
+			
+			if(green > 255.0f){
+				green = 255.0f;
+			} else if (green < 0){
+				green = 0;
+			}
+			
+			if(blue > 255.0f){
+				blue = 255.0f;
+			} else if (blue < 0){
+				blue = 0;
+			}
+			
+			ViewGlass.currentBackgroundColor = new Color(red * 1.0f/255.0f, green * 1.0f/255.0f, blue * 1.0f/255.0f);
+			
+		}
+
+		private void updateColorVBO() {
+			
+			if(colorVBOXVel > 0 && colorVBO[0] >= 255 ){
+				colorVBOXVel = -1 * colorVBOXVel;
+				colorVBO[0] = 255;
+			} else if(colorVBOXVel < 0 && colorVBO[0] <= 15 ){
+				colorVBOXVel = -1 * colorVBOXVel;
+				colorVBO[0] = 10;
+			}
+			
+			if(colorVBOYVel > 0 && colorVBO[2] >= 255 ){
+				colorVBOYVel = -1 * colorVBOYVel;
+				colorVBO[2] = 255;
+			} else if(colorVBOYVel < 0 && colorVBO[2] <= 15 ){
+				colorVBOYVel = -1 * colorVBOYVel;
+				colorVBO[2] = 10;
+			}
+			
+			if(colorVBOZVel > 0 && colorVBO[4] >= 255 ){
+				colorVBOZVel = -1 * colorVBOZVel;
+				colorVBO[4] = 255;
+			} else if(colorVBOZVel < 0 && colorVBO[4] <= 15 ){
+				colorVBOZVel = -1 * colorVBOZVel;
+				colorVBO[4] = 10;
+			}
+			
+			colorVBO[0] = colorVBO[0] + colorVBOXVel;
+			colorVBO[2] = colorVBO[2] + colorVBOYVel;
+			colorVBO[4] = colorVBO[4] + colorVBOZVel;
+		}
+
 		public int getPanelID(){
 			return panelID;
 		}

@@ -40,7 +40,7 @@ public final class ViewGlass extends JFrame implements ViewGlassInt {
 
     private int flashRedrawCount = 0;
     public static boolean flashRedraw = false;
-    public static Color currentBackgroundColor = new Color(0.1f, 0.1f, 0.2f);
+    public static Color currentBackgroundColor = new Color(0.0f, 0.0f, 0.0f);
     
   //  JTextField inX;
 //    private JViewport vp;
@@ -166,32 +166,7 @@ public final class ViewGlass extends JFrame implements ViewGlassInt {
 	}
 	
 	@Override
-	public void paint(Graphics g) {
-		/***
-		 * 
-		//Finish for Background color changing effects
-		 * 
-		 * 
-	    float redColor = 0.1f;
-	    float greenColor = 0.7f;
-	    float blueColor = 0.8f;
-	    
-		flashRedrawCount++;
-		if(Math.abs(flashRedrawCount) > 100){
-			flashRedrawCount = 0;
-			redColor += .01f;
-			greenColor += .01f;
-			blueColor += .01f;
-		} else if( Math.abs(flashRedrawCount) <= 100) {
-			flashRedrawCount++;
-			redColor -= .01f;
-			greenColor -= .01f;
-			blueColor -= .01f;
-		}
-		
-		currentBackgroundColor = new Color(redColor, greenColor, blueColor);
-		
-		***/
+	public void paint(Graphics g) {		
 		super.paint(g);
 	}
     

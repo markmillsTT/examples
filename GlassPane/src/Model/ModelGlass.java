@@ -28,26 +28,39 @@ public final class ModelGlass implements ModelGlassInt {
 	Map<Integer,Map<Vector3f,Shape>> allGlassPaneVectData = new HashMap<Integer,Map<Vector3f, Shape>>();
 	private long startTime;
 	
+	float xVel = 0;
+	float yVel = 0;
+	float zVel = 0;
+	
     public ModelGlass() {
     	
     	CoordinateSystem csHold;
-    	double radius = 8.0;
-    	double zOffset = 40.0;
+    	double radius = 3.0;
+    	double zOffset = 540.0;
     	int count = 0;
     	
-    	for(double phi = 0 ; phi < 2.0*Math.PI ; phi += (2*Math.PI/ 4.0)){
-    		for(double theta = 1 ; theta < 2.0*Math.PI ; theta += (2*Math.PI/ 8.0)){
+    	for(double phi = 0 ; phi < 2.0*Math.PI ; phi += (2*Math.PI/ 2.0)){
+    		for(double theta = 1 ; theta < 2.0*Math.PI ; theta += (2*Math.PI/ 3.0)){
     			csHold = new CoordinateSystem(count);
     			csHold.setDistanceVectorFromOrg(new Vector3f(
-    					(float)(radius*Math.sin(theta)*Math.tan(phi)),
-    					(float)(radius*Math.sin(theta)*Math.tan(phi)),
-    					(float)(radius*Math.sin(theta) + zOffset)));
+    					(float)(radius*Math.sin(theta)*Math.cos(phi)),
+    					(float)(radius*Math.sin(theta)*Math.cos(phi)),
+    					(float)(radius*Math.cos(theta) + zOffset)));
     			SwirlDroplet droplet = new SwirlDroplet(csHold);
-//    			Sphere sphere = new Sphere(4.0f, 4, 16, csHold);
+    			Sphere sphere = new Sphere(4.0f, 4, 16, csHold);
 	    		allCoords.add(csHold);
 	    		count++;
     		}
     	}
+    	
+    	csHold = new CoordinateSystem(count);
+		csHold.setDistanceVectorFromOrg(new Vector3f(
+				(float)(0),
+				(float)(0),
+				(float)(zOffset)));
+//		Cube cube = new Cube(2f,csHold);
+//		Sphere sphere = new Sphere(4.0f, 4, 16, csHold);
+		allCoords.add(csHold);
     	
 //    	for(double theta = 1 ; theta < 2.0*Math.PI ; theta += (2*Math.PI/ 4.0)){
 //			csHold = new CoordinateSystem(count);
@@ -91,7 +104,7 @@ public final class ModelGlass implements ModelGlassInt {
 		int x = 0,y = 0,width = 0,height = 0;
 		
 		// Don't add anything to map if it's full
-		if(shapeMap.size() > 40000){
+		if(shapeMap.size() > 4000){
 			shapeMap.clear();
 			return;
 		}
@@ -104,6 +117,7 @@ public final class ModelGlass implements ModelGlassInt {
 		//draw dot
 		Vector3f origin = new Vector3f(distVectorsToViewables.get(0));
 		origin.sub(positionVectorsInOCS.get(0));
+		origin.add(new Vector3f(this.xVel,this.yVel,this.zVel + (float)(15.5f*Math.sin(this.startTime))) );
 		Vector3f pixVector = mapVectorToPixelVector(origin,drawingBoundsForPort);
 	//	shapeMap.put(origin,new Ellipse2D.Double((int) pixVector.x()-10, (int) pixVector.y()-10, 10, 10));
 		/* remember -- screen uses x y --> positive going right then down on computer screen

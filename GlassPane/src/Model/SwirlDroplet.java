@@ -18,10 +18,10 @@ public class SwirlDroplet implements ViewableModel {
 	public SwirlDroplet(CoordinateSystem objCoordSystem){
 		this.objCoordSystem = objCoordSystem;
 		this.objCoordSystem.addToViewables(this);
-		this.numberDroplets = 16;
+		this.numberDroplets = 64;
 		this.dropletThetaPhasesOCS = new double[numberDroplets];
-		this.swirlRadius = 3.5;
-		this.sphereRadius = 0.02f;
+		this.swirlRadius = 50;
+		this.sphereRadius = 0.05f;
 		for(int i = 0; i < numberDroplets; i++){
 			double thetaPhase = ((double)i)*2.0 * Math.PI / ((double)numberDroplets);
 		//	this.dropletThetaPhasesOCS[i] = new Vector3f((float)(swirlRadius* Math.sin(theta)), 0, (float) (swirlRadius*Math.cos(theta)));
@@ -60,7 +60,7 @@ public class SwirlDroplet implements ViewableModel {
 	public List<Vector3f> getAllPositionVectorsInOCS(long t) {
 		
 		List<Vector3f> sp;
-		double omegaT = (t)*2*Math.PI/(1024*4);
+		double omegaT = (t)*2*Math.PI/(1024*128);
 		sp = getSwirlPattern1(omegaT);
 //		sp = getSwirlPattern2(omegaT);
 //		sp = getSwirlPattern3(omegaT);
@@ -76,9 +76,9 @@ public class SwirlDroplet implements ViewableModel {
 		Vector3f distVectInOCS = new Vector3f();
 		for(int i = 0 ; i < this.numberDroplets; i++){
 			float x,y,z;
-			x = (float) (.4*Math.sqrt(2.0)*swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i]/2.0f)*swirlRadius*Math.cos(omegaT/4.0+dropletThetaPhasesOCS[i]/2.0f) );
-			y = (float) (.4*Math.sqrt(2.0)*swirlRadius*Math.cos(omegaT+dropletThetaPhasesOCS[i]/2.0f) );
-			z = (float) (35f+.8*swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i]/2.0f)*swirlRadius*Math.cos(omegaT/8.0+dropletThetaPhasesOCS[i]/2.0f) );
+			x = (float) ( swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i]/2.0f)*swirlRadius*Math.cos(omegaT/4.0+dropletThetaPhasesOCS[i]/2.0f) );
+			y = (float) ( swirlRadius*Math.cos(omegaT+dropletThetaPhasesOCS[i]/2.0f) );
+			z = (float) ( swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i]/2.0f)*swirlRadius*Math.cos(omegaT/8.0+dropletThetaPhasesOCS[i]/2.0f) );
 			distVectInOCS = new Vector3f(x, y, z); //green arrow in Level 1 part B
 			allGreenArrows.add(distVectInOCS);
 		}
