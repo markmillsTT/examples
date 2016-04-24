@@ -28,24 +28,24 @@ public final class ModelGlass implements ModelGlassInt {
 	Map<Integer,Map<Vector3f,Shape>> allGlassPaneVectData = new HashMap<Integer,Map<Vector3f, Shape>>();
 	private long startTime;
 	
-	float xVel = 0;
-	float yVel = 0;
-	float zVel = 0;
+	float xVel = 1;
+	float yVel = 1;
+	float zVel = 1;
 	
     public ModelGlass() {
     	
     	CoordinateSystem csHold;
     	double radius = 3.0;
-    	double zOffset = 540.0;
+    	double zOffset = 150.0;
     	int count = 0;
     	
     	for(double phi = 0 ; phi < 2.0*Math.PI ; phi += (2*Math.PI/ 2.0)){
-    		for(double theta = 1 ; theta < 2.0*Math.PI ; theta += (2*Math.PI/ 3.0)){
+    		for(double theta = 1 ; theta < 2.0*Math.PI ; theta += (2*Math.PI/ 2.0)){
     			csHold = new CoordinateSystem(count);
     			csHold.setDistanceVectorFromOrg(new Vector3f(
-    					(float)(radius*Math.sin(theta)*Math.cos(phi)),
-    					(float)(radius*Math.sin(theta)*Math.cos(phi)),
-    					(float)(radius*Math.cos(theta) + zOffset)));
+    					(float)(radius*Math.sin(theta)*Math.cos(phi)*Math.tan(phi)),
+    					(float)(radius*Math.sin(theta)*Math.cos(phi)*Math.tan(phi)),
+    					(float)(radius*Math.cos(phi) + zOffset)));
     			SwirlDroplet droplet = new SwirlDroplet(csHold);
     			Sphere sphere = new Sphere(4.0f, 4, 16, csHold);
 	    		allCoords.add(csHold);
@@ -196,7 +196,9 @@ public final class ModelGlass implements ModelGlassInt {
 			}
 				//FIXME --- point is to middle of a cube, but projection is just front side parallel to viewer
 			if(x >= -drawingBoundsForPort.width && x < 2*drawingBoundsForPort.width && y >= -1.5*drawingBoundsForPort.height && y <= 1.5*drawingBoundsForPort.height )
-				shapeMap.put(point,new Ellipse2D.Double(x,y,width,height));
+				shapeMap.put(point,new Rectangle2D.Double(x,y,width,height));
+//				shapeMap.put(point,new Ellipse2D.Double(x,y,width,height));
+
 		}	
 	}
 	private Vector3f applyTransforms(Vector3f vector, List<Matrix4x4f> transforms) {

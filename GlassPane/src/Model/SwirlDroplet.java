@@ -13,15 +13,17 @@ public class SwirlDroplet implements ViewableModel {
 	private int numberDroplets;
 	private double swirlRadius; //in meters
 	private double sphereRadius;
-	private double swirlPeriod = 500.0;
+	private double swirlPeriod = 1.0/(2.0*Math.PI/(8.0));
+	private float zOffset = 10;
+	private boolean zIncreasing;
 	
 	public SwirlDroplet(CoordinateSystem objCoordSystem){
 		this.objCoordSystem = objCoordSystem;
 		this.objCoordSystem.addToViewables(this);
-		this.numberDroplets = 64;
+		this.numberDroplets = 8;
 		this.dropletThetaPhasesOCS = new double[numberDroplets];
-		this.swirlRadius = 50;
-		this.sphereRadius = 0.05f;
+		this.swirlRadius = 150;
+		this.sphereRadius = 0.1f;
 		for(int i = 0; i < numberDroplets; i++){
 			double thetaPhase = ((double)i)*2.0 * Math.PI / ((double)numberDroplets);
 		//	this.dropletThetaPhasesOCS[i] = new Vector3f((float)(swirlRadius* Math.sin(theta)), 0, (float) (swirlRadius*Math.cos(theta)));
@@ -44,6 +46,15 @@ public class SwirlDroplet implements ViewableModel {
 	
 	@Override
 	public CoordinateSystem getObjectCoordSystem() {
+		
+		if(zOffset >= 200 && zIncreasing ){
+			zOffset -= (float) 25 * Math.abs( Math.sin( (2.0*Math.PI/(256.0)) * System.currentTimeMillis() + 0) );
+			zIncreasing = false;
+		} else if(zOffset <= 100 && !zIncreasing ){
+			zOffset += (float) 25 * Math.abs( Math.sin( (2.0*Math.PI/(256.0)) * System.currentTimeMillis() + 0) );
+			zIncreasing = true;
+		}
+		
 		return this.objCoordSystem;
 	}
 
@@ -60,7 +71,7 @@ public class SwirlDroplet implements ViewableModel {
 	public List<Vector3f> getAllPositionVectorsInOCS(long t) {
 		
 		List<Vector3f> sp;
-		double omegaT = (t)*2*Math.PI/(1024*128);
+		double omegaT = (t)*2*Math.PI/(512);
 		sp = getSwirlPattern1(omegaT);
 //		sp = getSwirlPattern2(omegaT);
 //		sp = getSwirlPattern3(omegaT);
@@ -76,9 +87,9 @@ public class SwirlDroplet implements ViewableModel {
 		Vector3f distVectInOCS = new Vector3f();
 		for(int i = 0 ; i < this.numberDroplets; i++){
 			float x,y,z;
-			x = (float) ( swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i]/2.0f)*swirlRadius*Math.cos(omegaT/4.0+dropletThetaPhasesOCS[i]/2.0f) );
-			y = (float) ( swirlRadius*Math.cos(omegaT+dropletThetaPhasesOCS[i]/2.0f) );
-			z = (float) ( swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i]/2.0f)*swirlRadius*Math.cos(omegaT/8.0+dropletThetaPhasesOCS[i]/2.0f) );
+			x = (float) ( swirlRadius*Math.sin(4*omegaT+dropletThetaPhasesOCS[i]/2.0f)*swirlRadius*Math.cos(omegaT/4.0+dropletThetaPhasesOCS[i]/2.0f) );
+			y = (float) ( swirlRadius*Math.cos(2.0*omegaT+dropletThetaPhasesOCS[i]/2.0f) );
+			z = (float) ( swirlRadius*Math.cos(8*omegaT+dropletThetaPhasesOCS[i]/4.0f)*swirlRadius*Math.cos(omegaT/4.0+dropletThetaPhasesOCS[i]/2.0f) );
 			distVectInOCS = new Vector3f(x, y, z); //green arrow in Level 1 part B
 			allGreenArrows.add(distVectInOCS);
 		}
@@ -90,9 +101,9 @@ public class SwirlDroplet implements ViewableModel {
 		Vector3f distVectInOCS = new Vector3f();
 		for(int i = 0 ; i < this.numberDroplets; i++){
 			float x,y,z;
-			x = (float) (swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i]/4.0f)*swirlRadius*Math.cos(omegaT/2.0+dropletThetaPhasesOCS[i]/4.0f) );
-			y = (float) (swirlRadius*Math.tan(omegaT+dropletThetaPhasesOCS[i]));
-			z = (float) (30f+swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i]/4.0f)*swirlRadius*Math.cos(omegaT/2.0+dropletThetaPhasesOCS[i]/4.0f) );
+			x = (float) (swirlRadius*Math.sin(2*omegaT+dropletThetaPhasesOCS[i]/4.0f)*swirlRadius*Math.cos(omegaT/2.0+dropletThetaPhasesOCS[i]/4.0f) );
+			y = (float) (swirlRadius*Math.cos(4*omegaT+dropletThetaPhasesOCS[i]));
+			z = (float) (swirlRadius*Math.sin(2*omegaT+dropletThetaPhasesOCS[i]/4.0f)*swirlRadius*Math.cos(omegaT/2.0+dropletThetaPhasesOCS[i]/4.0f) );
 			distVectInOCS = new Vector3f(x, y, z); //green arrow in Level 1 part B
 			allGreenArrows.add(distVectInOCS);
 		}
@@ -104,11 +115,12 @@ public class SwirlDroplet implements ViewableModel {
 		Vector3f distVectInOCS = new Vector3f();
 		for(int i = 0 ; i < this.numberDroplets; i++){
 			float x,y,z;
-			double sin = Math.sin(omegaT+dropletThetaPhasesOCS[i]);
-			double cos = Math.cos(omegaT+dropletThetaPhasesOCS[i]);
-			x = (float) (2*swirlRadius*sin*cos);
-			y = (float) (2*swirlRadius*cos);
-			z = (float) (swirlRadius*sin*sin);
+			double sin = Math.sin(8*omegaT+dropletThetaPhasesOCS[i]);
+			double cos = Math.cos(4*Math.sqrt(2)*omegaT+dropletThetaPhasesOCS[i]);
+			double tan = Math.cos(8*omegaT+dropletThetaPhasesOCS[i]);
+			x = (float) (2*swirlRadius*sin*sin*tan);
+			y = (float) (2*swirlRadius*cos*sin*tan);
+			z = (float) (swirlRadius*sin*tan);
 			distVectInOCS = new Vector3f(x, y, z); //green arrow in Level 1 part B
 			allGreenArrows.add(distVectInOCS);
 		}

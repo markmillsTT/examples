@@ -25,15 +25,15 @@ public class GlassPanel extends JPanel {
 		boolean showFarthestFirst = false;
 		
 		//Shape Colors
-		float[] colorVBO = {0, 255, 190 , 255 , 0, 255}; //color Virtual Buffer Object
+		float[] colorVBO = {0, 255, 200 , 255 , 0, 255}; //color Virtual Buffer Object
 		float colorVBOXVel = 1;
 		float colorVBOYVel = -1;
 		float colorVBOZVel = 1;
 		
 		//Background Colors
-	    float backgroundColorRedVel = 0f;
-		float backgroundColorGreenVel = 0f;
-		float backgroundColorBlueVel = -1f;
+	    float backgroundColorRedVel = 1f;
+		float backgroundColorGreenVel = -1f;
+		float backgroundColorBlueVel = 0.5f;
 		
 //		Graphics2D globalGraphics;
 				
