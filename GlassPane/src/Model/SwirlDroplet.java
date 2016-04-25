@@ -20,10 +20,10 @@ public class SwirlDroplet implements ViewableModel {
 	public SwirlDroplet(CoordinateSystem objCoordSystem){
 		this.objCoordSystem = objCoordSystem;
 		this.objCoordSystem.addToViewables(this);
-		this.numberDroplets = 8;
+		this.numberDroplets = 16;
 		this.dropletThetaPhasesOCS = new double[numberDroplets];
-		this.swirlRadius = 150;
-		this.sphereRadius = 0.1f;
+		this.swirlRadius = 100;
+		this.sphereRadius = 1f;
 		for(int i = 0; i < numberDroplets; i++){
 			double thetaPhase = ((double)i)*2.0 * Math.PI / ((double)numberDroplets);
 		//	this.dropletThetaPhasesOCS[i] = new Vector3f((float)(swirlRadius* Math.sin(theta)), 0, (float) (swirlRadius*Math.cos(theta)));
@@ -71,7 +71,7 @@ public class SwirlDroplet implements ViewableModel {
 	public List<Vector3f> getAllPositionVectorsInOCS(long t) {
 		
 		List<Vector3f> sp;
-		double omegaT = (t)*2*Math.PI/(512);
+		double omegaT = (t)*2*Math.PI/(256);
 		sp = getSwirlPattern1(omegaT);
 //		sp = getSwirlPattern2(omegaT);
 //		sp = getSwirlPattern3(omegaT);

@@ -36,31 +36,31 @@ public final class ModelGlass implements ModelGlassInt {
     	
     	CoordinateSystem csHold;
     	double radius = 3.0;
-    	double zOffset = 150.0;
+    	double zOffset = 130.0;
     	int count = 0;
     	
-    	for(double phi = 0 ; phi < 2.0*Math.PI ; phi += (2*Math.PI/ 2.0)){
-    		for(double theta = 1 ; theta < 2.0*Math.PI ; theta += (2*Math.PI/ 2.0)){
+    	for(double phi = 0 ; phi < 2.0*Math.PI ; phi += (2*Math.PI/ 4.0)){
+    		for(double theta = 1 ; theta < 2.0*Math.PI ; theta += (2*Math.PI/ 1.0)){
     			csHold = new CoordinateSystem(count);
     			csHold.setDistanceVectorFromOrg(new Vector3f(
-    					(float)(radius*Math.sin(theta)*Math.cos(phi)*Math.tan(phi)),
-    					(float)(radius*Math.sin(theta)*Math.cos(phi)*Math.tan(phi)),
+    					(float)(radius*Math.sin(theta)*Math.cos(phi)),
+    					(float)(radius*Math.sin(theta)*Math.cos(phi)),
     					(float)(radius*Math.cos(phi) + zOffset)));
     			SwirlDroplet droplet = new SwirlDroplet(csHold);
-    			Sphere sphere = new Sphere(4.0f, 4, 16, csHold);
+//    			Sphere sphere = new Sphere(4.0f, 4, 16, csHold);
 	    		allCoords.add(csHold);
 	    		count++;
     		}
     	}
     	
-    	csHold = new CoordinateSystem(count);
-		csHold.setDistanceVectorFromOrg(new Vector3f(
-				(float)(0),
-				(float)(0),
-				(float)(zOffset)));
+//    	csHold = new CoordinateSystem(count);
+//		csHold.setDistanceVectorFromOrg(new Vector3f(
+//				(float)(0),
+//				(float)(0),
+//				(float)(zOffset)));
 //		Cube cube = new Cube(2f,csHold);
 //		Sphere sphere = new Sphere(4.0f, 4, 16, csHold);
-		allCoords.add(csHold);
+//		allCoords.add(csHold);
     	
 //    	for(double theta = 1 ; theta < 2.0*Math.PI ; theta += (2*Math.PI/ 4.0)){
 //			csHold = new CoordinateSystem(count);
@@ -196,8 +196,8 @@ public final class ModelGlass implements ModelGlassInt {
 			}
 				//FIXME --- point is to middle of a cube, but projection is just front side parallel to viewer
 			if(x >= -drawingBoundsForPort.width && x < 2*drawingBoundsForPort.width && y >= -1.5*drawingBoundsForPort.height && y <= 1.5*drawingBoundsForPort.height )
-				shapeMap.put(point,new Rectangle2D.Double(x,y,width,height));
-//				shapeMap.put(point,new Ellipse2D.Double(x,y,width,height));
+//				shapeMap.put(point,new Rectangle2D.Double(x,y,width,height));
+				shapeMap.put(point,new Ellipse2D.Double(x,y,width,height));
 
 		}	
 	}

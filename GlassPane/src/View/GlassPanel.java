@@ -25,7 +25,7 @@ public class GlassPanel extends JPanel {
 		boolean showFarthestFirst = false;
 		
 		//Shape Colors
-		float[] colorVBO = {0, 255, 200 , 255 , 0, 255}; //color Virtual Buffer Object
+		float[] colorVBO = {0, 100, 200 , 255 , 0, 100}; //color Virtual Buffer Object
 		float colorVBOXVel = 1;
 		float colorVBOYVel = -1;
 		float colorVBOZVel = 1;
@@ -107,8 +107,8 @@ public class GlassPanel extends JPanel {
 //					
 				while(centerOfDrawnShapes.hasNext()){
 					Vector3f center = centerOfDrawnShapes.next();
-					
 					if(allShapesToDraw.get(center) instanceof Ellipse2D.Double){
+//					if(allShapesToDraw.get(center) instanceof Rectangle2D.Double){
 						//map <x,y,z> to <r,g,b> ... A(X) = Y 
 						Vector3f colorTrnsFrmResult = new Vector3f();
 						/* A(x) = 255.0/(5.0)*center.x()+255.0/(2.0)  		-5 <= x,y <= 5
