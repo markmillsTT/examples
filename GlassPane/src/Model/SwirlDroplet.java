@@ -13,17 +13,17 @@ public class SwirlDroplet implements ViewableModel {
 	private int numberDroplets;
 	private double swirlRadius; //in meters
 	private double sphereRadius;
-	private double swirlPeriod = 1.0/(2.0*Math.PI/(8.0));
+	private double swirlPeriod = 1.0/(2.0*Math.PI/(4.0));
 	private float zOffset = 10;
 	private boolean zIncreasing;
 	
 	public SwirlDroplet(CoordinateSystem objCoordSystem){
 		this.objCoordSystem = objCoordSystem;
 		this.objCoordSystem.addToViewables(this);
-		this.numberDroplets = 16;
+		this.numberDroplets = 32;
 		this.dropletThetaPhasesOCS = new double[numberDroplets];
-		this.swirlRadius = 100;
-		this.sphereRadius = 1f;
+		this.swirlRadius = 20;
+		this.sphereRadius = .3f;
 		for(int i = 0; i < numberDroplets; i++){
 			double thetaPhase = ((double)i)*2.0 * Math.PI / ((double)numberDroplets);
 		//	this.dropletThetaPhasesOCS[i] = new Vector3f((float)(swirlRadius* Math.sin(theta)), 0, (float) (swirlRadius*Math.cos(theta)));
@@ -57,7 +57,7 @@ public class SwirlDroplet implements ViewableModel {
 		
 		return this.objCoordSystem;
 	}
-
+ 
 	/**
 	 * returns list of distance vectors from observer object origin of things to be drawn.
 	 * 

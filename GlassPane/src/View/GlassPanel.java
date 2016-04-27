@@ -3,13 +3,19 @@ package View;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Polygon;
 import java.awt.Shape;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.ImageObserver;
+import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import Controller.ControllerGlassInt;
@@ -25,15 +31,18 @@ public class GlassPanel extends JPanel {
 		boolean showFarthestFirst = false;
 		
 		//Shape Colors
-		float[] colorVBO = {0, 100, 200 , 255 , 0, 100}; //color Virtual Buffer Object
+		float[] colorVBO = {100, 255, 100 , 255 , 100, 255}; //color Virtual Buffer Object
 		float colorVBOXVel = 1;
-		float colorVBOYVel = -1;
-		float colorVBOZVel = 1;
+		float colorVBOYVel = 2;
+		float colorVBOZVel = 3;
 		
 		//Background Colors
 	    float backgroundColorRedVel = 1f;
 		float backgroundColorGreenVel = -1f;
 		float backgroundColorBlueVel = 0.5f;
+		
+		//For drawing images and morphing them
+		float count = 0f;
 		
 //		Graphics2D globalGraphics;
 				
@@ -66,10 +75,92 @@ public class GlassPanel extends JPanel {
 			
 			boolean flashRedraw = ViewGlass.flashRedraw;
 
-			g2.setColor(ViewGlass.currentBackgroundColor);
+//			g2.setColor(ViewGlass.currentBackgroundColor);
+			g2.setColor(new Color(0.5f, 0.0f, 0.2f));
 			g2.fill(new Rectangle2D.Double(0,0,2000,2000));
-//			Image img = ImageIO.read(new File("background.jpg");
-//			g2.drawImage(img, x, y, observer);
+			Image img;
+			try {
+				img = ImageIO.read(new File("res/JKillaIntroFreezeFrame.jpg"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return;
+			}
+			ImageObserver observer = new ImageObserver() {
+				@Override
+				public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
+					// TODO Auto-generated method stub
+					return false;
+				}
+			};
+			
+//			g2.drawImage(img, -100, 0, observer);
+//			g2.drawImage(img,
+////				(int) (center.x() - allShapesToDraw.get(center).getBounds2D().getX()/2 ),
+////				(int) (center.y() - allShapesToDraw.get(center).getBounds2D().getY()/2 + 150 ),
+////				(int) (center.x() + allShapesToDraw.get(center).getBounds2D().getX()/2 ),
+////				(int) (center.y() + allShapesToDraw.get(center).getBounds2D().getY()/2 + 150),
+//				(int) (-100 + count),
+//				(int) (-100 + count),
+//				(int) (img.getWidth(observer) - count),
+//				(int) (img.getHeight(observer) - count),
+//				0, //sx1
+//				0, //sy1
+//				img.getWidth(observer), //sx2
+//				img.getHeight(observer), //sy2
+//				g2.getColor(),
+//				observer);
+//			
+//			g2.drawImage(img,
+////					(int) (center.x() - allShapesToDraw.get(center).getBounds2D().getX()/2 ),
+////					(int) (center.y() - allShapesToDraw.get(center).getBounds2D().getY()/2 + 150 ),
+////					(int) (center.x() + allShapesToDraw.get(center).getBounds2D().getX()/2 ),
+////					(int) (center.y() + allShapesToDraw.get(center).getBounds2D().getY()/2 + 150),
+//					(int) (-100 + count),
+//					(int) (-100 + .5*count),
+//					(int) (img.getWidth(observer) - 2*count),
+//					(int) (img.getHeight(observer) - 4*count),
+//					0, //sx1
+//					0, //sy1
+//					img.getWidth(observer), //sx2
+//					img.getHeight(observer), //sy2
+//					g2.getColor(),
+//					observer);
+			
+//			g2.drawImage(img, -100, 0, observer);
+			
+			g2.setColor(ViewGlass.currentBackgroundColor);
+			
+			int[] x1 = {
+					(int)(-100 + count),
+					(int)(-100 + count),
+					(int)(img.getWidth(observer) - 2*count),
+					(int)(img.getWidth(observer) - 2*count)
+					};
+			int[] y1 = {
+					(int)(-100 + .5*count),
+					(int)(img.getHeight(observer) - 4*count),
+					(int)(img.getHeight(observer) - 4*count),
+					(int)(-100 + .5*count)
+					};
+			g2.fill(new Polygon(x1,y1,4));
+			
+			int[] x2 = {
+					(int)(-100 + count),
+					(int)(-100 + count),
+					(int)(img.getWidth(observer) - count),
+					(int)(img.getWidth(observer) - count)
+					};
+			int[] y2 = {
+					(int)(-100 + count),
+					(int)(img.getHeight(observer) - count),
+					(int)(img.getHeight(observer) - count),
+					(int)(-100 + count)
+					};
+			g2.fill(new Polygon(x2,y2,4));
+			
+			count += 2f;
+			
 			if(controller == null)
 				controller = ViewGlass.controller;
 			else if(flashRedraw){
@@ -127,6 +218,21 @@ public class GlassPanel extends JPanel {
 						else //just far into picture
 							g2.setColor(Color.WHITE);
 						g2.fill(allShapesToDraw.get(center));
+//						g2.drawImage(img,
+////								(int) (center.x() - allShapesToDraw.get(center).getBounds2D().getX()/2 ),
+////								(int) (center.y() - allShapesToDraw.get(center).getBounds2D().getY()/2 + 150 ),
+////								(int) (center.x() + allShapesToDraw.get(center).getBounds2D().getX()/2 ),
+////								(int) (center.y() + allShapesToDraw.get(center).getBounds2D().getY()/2 + 150),
+//								(int) (center.x()),
+//								(int) (center.y()),
+//								(int) (center.x() + allShapesToDraw.get(center).getBounds2D().getX()),
+//								(int) (center.y() + allShapesToDraw.get(center).getBounds2D().getY()),
+//								0, //sx1
+//								0, //sy1
+//								img.getWidth(observer), //sx2
+//								img.getHeight(observer), //sy2
+//								g2.getColor(),
+//								observer);
 					}
 					else{
 						g2.setColor(Color.RED);

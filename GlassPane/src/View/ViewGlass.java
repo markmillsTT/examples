@@ -34,13 +34,13 @@ public final class ViewGlass extends JFrame implements ViewGlassInt {
 
     public static ControllerGlassInt controller;
     private final Timer timer = new Timer(20, this);
-    public static final int GLASSPANE_HEIGHT = 600;
-    public static final int GLASSPANE_WIDTH = 800;
+    public static final int GLASSPANE_HEIGHT = 250;
+    public static final int GLASSPANE_WIDTH = 250;
     final static boolean RIGHT_TO_LEFT = true;
 
     private int flashRedrawCount = 0;
     public static boolean flashRedraw = false;
-    public static Color currentBackgroundColor = new Color(0.0f, 0.0f, 0.0f);
+    public static Color currentBackgroundColor = new Color(0.9f, 0.9f, 1f);
     
   //  JTextField inX;
 //    private JViewport vp;
