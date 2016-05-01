@@ -21,6 +21,7 @@ import javax.swing.Timer;
 
 import Controller.ControllerGlassInt;
 import Helpers.AllActionListeners;
+import Helpers.Vector3f;
 
 /**
  * 
@@ -40,7 +41,6 @@ public final class ViewGlass extends JFrame implements ViewGlassInt {
 
     private int flashRedrawCount = 0;
     public static boolean flashRedraw = false;
-    public static Color currentBackgroundColor = new Color(0.9f, 0.9f, 1f);
     
   //  JTextField inX;
 //    private JViewport vp;
@@ -77,7 +77,19 @@ public final class ViewGlass extends JFrame implements ViewGlassInt {
     	contentPane.setLayout(gl);
     	GridBagConstraints c = new GridBagConstraints();
     	
-    	this.gp1 = new GlassPanel(2,controller);
+    	float[] shapeColor1 = {127, 255, 127, 255, 127, 255 };
+    	Vector3f shapeColorVel1 = new Vector3f(1f, -1f, 1f);
+    	Color bkgColor = new Color(0.5f, 0.5f, 0.5f);
+    	Vector3f bkgColorVel1 = new Vector3f(1f, -1f, 1f);
+    	
+    	GlassPanel.GlassPanelColorPackage colorPkg1 = GlassPanel.getGlassPanelColorPackageInstance(
+    			shapeColor1,
+    			shapeColorVel1,
+    			bkgColor,
+    			bkgColorVel1
+    			);  	
+    	
+    	this.gp1 = new GlassPanel(1,controller, colorPkg1);    	
     	c.fill = GridBagConstraints.HORIZONTAL;
     	//c.ipady = GLASSPANE_HEIGHT;
     	c.ipady = GLASSPANE_WIDTH;
@@ -93,7 +105,7 @@ public final class ViewGlass extends JFrame implements ViewGlassInt {
     		@Override
     		public void keyPressed(KeyEvent e) {
     			if(e.getKeyChar() == KeyEvent.VK_P)
-    				controller.toggleToParrellelView(gp1.getPanelID());
+    				controller.toggleToParrellelView(gp2.getPanelID());
     		}@Override
     		public void mouseClicked(MouseEvent e) {
     			// TODO Auto-generated method stub
@@ -104,18 +116,30 @@ public final class ViewGlass extends JFrame implements ViewGlassInt {
     		
     	});
     	
+    	float[] shapeColor2 = {127, 255, 127, 255, 127, 255 };
+    	Vector3f shapeColorVel2 = new Vector3f(-1f, 1f, -1f);
+    	Vector3f bkgColorVel2 = new Vector3f(1f, -1f, 1f);
     	
-/*    	this.cp = new ControlPanel();
-    	setupControlPanel();
+    	GlassPanel.GlassPanelColorPackage colorPkg2 = GlassPanel.getGlassPanelColorPackageInstance(
+    			shapeColor2,
+    			shapeColorVel2,
+    			bkgColor,
+    			bkgColorVel2
+    			); 
+    	
+    	this.gp2 = new GlassPanel(2,controller, colorPkg2);
     	c.fill = GridBagConstraints.HORIZONTAL;
+    	//c.ipady = GLASSPANE_HEIGHT;
+    	c.ipady = GLASSPANE_WIDTH;
+  //  	c.ipadx =GLASSPANE_HEIGHT;
+    	c.gridwidth = 1;
+    	c.gridheight = 2;
     	c.weightx = 1;
-    	c.weighty = 1/8;
-    	c.gridx = 0;
-    	c.gridy = 1;
-    	contentPane.add(cp,gl);    	*/
+    	c.weighty = 1;
+    	c.gridx = 1;
+    	c.gridy = 0;
+    	contentPane.add(gp2,gl);
     	
-//    	this.gp2 = new GlassPanel(2,controller);
-//   	contentPane.add(gp2,gl);
 //    	this.gp3 = new GlassPanel(3,controller);
 //   	contentPane.add(gp3,gl);
     	

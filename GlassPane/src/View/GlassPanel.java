@@ -29,24 +29,14 @@ public class GlassPanel extends JPanel {
 		ControllerGlassInt controller;
 		int framesToKeepPaint = 5;
 		boolean showFarthestFirst = false;
-		
-		//Shape Colors
-		float[] colorVBO = {100, 255, 100 , 255 , 100, 255}; //color Virtual Buffer Object
-		float colorVBOXVel = 1;
-		float colorVBOYVel = 2;
-		float colorVBOZVel = 3;
-		
-		//Background Colors
-	    float backgroundColorRedVel = 1f;
-		float backgroundColorGreenVel = -1f;
-		float backgroundColorBlueVel = 0.5f;
+		GlassPanelColorPackage colorPkg = null;
 		
 		//For drawing images and morphing them
 		float count = 0f;
 		
 //		Graphics2D globalGraphics;
-				
-		public GlassPanel(int panelNum,ControllerGlassInt controller){
+			
+		public GlassPanel(int panelNum, ControllerGlassInt controller){
 			this.panelID = panelNum;
 			this.controller = controller;
 			AllActionListeners listener = new AllActionListeners(){
@@ -57,7 +47,27 @@ public class GlassPanel extends JPanel {
 					}
 				}
 			};
+			this.colorPkg = colorPkg;
 			this.addKeyListener(listener);
+		}
+		
+		public GlassPanel(int panelNum, ControllerGlassInt controller, GlassPanelColorPackage colorPkg){
+			this.panelID = panelNum;
+			this.controller = controller;
+			AllActionListeners listener = new AllActionListeners(){
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if(e.getID() == KeyEvent.VK_P){
+						controller.toggleToParrellelView(panelID);
+					}
+				}
+			};
+			this.colorPkg = colorPkg;
+			this.addKeyListener(listener);
+		}
+		
+		public void setColorPackage(GlassPanelColorPackage colorPkg){
+			this.colorPkg = colorPkg;
 		}
 		
 		@Override
@@ -76,6 +86,7 @@ public class GlassPanel extends JPanel {
 			boolean flashRedraw = ViewGlass.flashRedraw;
 
 //			g2.setColor(ViewGlass.currentBackgroundColor);
+			
 			g2.setColor(new Color(0.5f, 0.0f, 0.2f));
 			g2.fill(new Rectangle2D.Double(0,0,2000,2000));
 			Image img;
@@ -129,7 +140,7 @@ public class GlassPanel extends JPanel {
 			
 //			g2.drawImage(img, -100, 0, observer);
 			
-			g2.setColor(ViewGlass.currentBackgroundColor);
+			g2.setColor(colorPkg.backgroundColor);
 			
 			int[] x1 = {
 					(int)(-100 + count),
@@ -206,9 +217,9 @@ public class GlassPanel extends JPanel {
 						 * A(y) = 255.0/(5.0)*center.y()+255.0/(2.0)			22.5 <= z <= 27.5
 						 * A(z) = 255.0/(5.0)*center.z()-255.0*22.5/(5.0)		diameter = (5.0)
 						 */
-						colorTrnsFrmResult.setX((float)(255.0 - Math.abs(center.x() - colorVBO[0]) * 255.0/colorVBO[1]));
-						colorTrnsFrmResult.setY((float)(255.0 - Math.abs(center.y() - colorVBO[2]) * 255.0/colorVBO[3]));
-						colorTrnsFrmResult.setZ((float)(255.0 - Math.abs(center.z() - colorVBO[4]) * 255.0/colorVBO[5]));
+						colorTrnsFrmResult.setX((float)(255.0 - Math.abs(center.x() - colorPkg.shapeColorVBO[0]) * 255.0/colorPkg.shapeColorVBO[1]));
+						colorTrnsFrmResult.setY((float)(255.0 - Math.abs(center.y() - colorPkg.shapeColorVBO[2]) * 255.0/colorPkg.shapeColorVBO[3]));
+						colorTrnsFrmResult.setZ((float)(255.0 - Math.abs(center.z() - colorPkg.shapeColorVBO[4]) * 255.0/colorPkg.shapeColorVBO[5]));
 						if(colorTrnsFrmResult.x() >= 0 && colorTrnsFrmResult.y() >= 0 && colorTrnsFrmResult.z() >= 0 &&
 								colorTrnsFrmResult.x() < 256 && colorTrnsFrmResult.y() < 256 && colorTrnsFrmResult.z() < 256){
 								g2.setColor(new Color((int)colorTrnsFrmResult.x(),(int)colorTrnsFrmResult.y(),(int)colorTrnsFrmResult.z()));
@@ -249,37 +260,39 @@ public class GlassPanel extends JPanel {
 		
 		private void updateBackgroundColor() {
 			
-			float red = ViewGlass.currentBackgroundColor.getRed();
-			float green = ViewGlass.currentBackgroundColor.getGreen();
-			float blue = ViewGlass.currentBackgroundColor.getBlue();
+			float red = colorPkg.backgroundColor.getRed();
+			float green = colorPkg.backgroundColor.getGreen();
+			float blue = colorPkg.backgroundColor.getBlue();
 			
-			if(backgroundColorRedVel > 0 && red >= 255 ){
-				backgroundColorRedVel = -1 * backgroundColorRedVel;
+			Vector3f velocity = colorPkg.backgroundColorVelocity; 
+			
+			if(velocity.x() > 0 && red >= 255 ){
+				velocity.setX(-1 * velocity.x());
 				red = 255;
-			} else if(backgroundColorRedVel < 0 && red <= 15 ){
-				backgroundColorRedVel = -1 * backgroundColorRedVel;
+			} else if(velocity.x() < 0 && red <= 15 ){
+				velocity.setX(-1 * velocity.x());
 				red = 10;
 			}
 			
-			if(backgroundColorGreenVel > 0 && green >= 255 ){
-				backgroundColorGreenVel = -1 * backgroundColorGreenVel;
+			if(velocity.y() > 0 && green >= 255 ){
+				velocity.setY(-1 * velocity.y());
 				green = 255;
-			} else if(backgroundColorGreenVel < 0 && green <= 15 ){
-				backgroundColorGreenVel = -1 * backgroundColorGreenVel;
+			} else if(velocity.y() < 0 && green <= 15 ){
+				velocity.setY(-1 * velocity.y());
 				green = 10;
 			}
 			
-			if(backgroundColorBlueVel > 0 && blue >= 255 ){
-				backgroundColorBlueVel = -1 * backgroundColorBlueVel;
+			if(velocity.z() > 0 && blue >= 255 ){
+				velocity.setZ(-1 * velocity.z());
 				blue = 255;
-			} else if(backgroundColorBlueVel < 0 && blue <= 15 ){
-				backgroundColorBlueVel = -1 * backgroundColorBlueVel;
+			} else if(velocity.z() < 0 && blue <= 15 ){
+				velocity.setZ(-1 * velocity.z());
 				blue = 10;
 			}
 			
-			red = red + backgroundColorRedVel;
-			green = green + backgroundColorGreenVel;
-			blue = blue + backgroundColorBlueVel;
+			red = red + velocity.x();
+			green = green + velocity.y();
+			blue = blue + velocity.z();
 			
 			if(red > 255.0f){
 				red = 255.0f;
@@ -299,42 +312,70 @@ public class GlassPanel extends JPanel {
 				blue = 0;
 			}
 			
-			ViewGlass.currentBackgroundColor = new Color(red * 1.0f/255.0f, green * 1.0f/255.0f, blue * 1.0f/255.0f);
+			colorPkg.backgroundColor = new Color(red * 1.0f/255.0f, green * 1.0f/255.0f, blue * 1.0f/255.0f);
 			
 		}
 
 		private void updateColorVBO() {
 			
-			if(colorVBOXVel > 0 && colorVBO[0] >= 255 ){
-				colorVBOXVel = -1 * colorVBOXVel;
+			float[] colorVBO = colorPkg.shapeColorVBO;
+			Vector3f colorVBOVel = colorPkg.shapeColorVelocity;
+			
+			if(colorVBOVel.x() > 0 && colorVBO[0] >= 255 ){
+				colorVBOVel.setX(-1 * colorVBOVel.x());
 				colorVBO[0] = 255;
-			} else if(colorVBOXVel < 0 && colorVBO[0] <= 15 ){
-				colorVBOXVel = -1 * colorVBOXVel;
+			} else if(colorVBOVel.x() < 0 && colorVBO[0] <= 15 ){
+				colorVBOVel.setX(-1 * colorVBOVel.x());
 				colorVBO[0] = 10;
 			}
 			
-			if(colorVBOYVel > 0 && colorVBO[2] >= 255 ){
-				colorVBOYVel = -1 * colorVBOYVel;
+			if(colorVBOVel.y() > 0 && colorVBO[2] >= 255 ){
+				colorVBOVel.setY(-1 * colorVBOVel.y());
 				colorVBO[2] = 255;
-			} else if(colorVBOYVel < 0 && colorVBO[2] <= 15 ){
-				colorVBOYVel = -1 * colorVBOYVel;
+			} else if(colorVBOVel.y() < 0 && colorVBO[2] <= 15 ){
+				colorVBOVel.setY(-1 * colorVBOVel.y());
 				colorVBO[2] = 10;
 			}
 			
-			if(colorVBOZVel > 0 && colorVBO[4] >= 255 ){
-				colorVBOZVel = -1 * colorVBOZVel;
+			if(colorVBOVel.z() > 0 && colorVBO[4] >= 255 ){
+				colorVBOVel.setZ(-1 * colorVBOVel.z());
 				colorVBO[4] = 255;
-			} else if(colorVBOZVel < 0 && colorVBO[4] <= 15 ){
-				colorVBOZVel = -1 * colorVBOZVel;
+			} else if(colorVBOVel.z() < 0 && colorVBO[4] <= 15 ){
+				colorVBOVel.setZ(-1 * colorVBOVel.z());
 				colorVBO[4] = 10;
 			}
 			
-			colorVBO[0] = colorVBO[0] + colorVBOXVel;
-			colorVBO[2] = colorVBO[2] + colorVBOYVel;
-			colorVBO[4] = colorVBO[4] + colorVBOZVel;
+			colorVBO[0] = colorVBO[0] + colorVBOVel.x();
+			colorVBO[2] = colorVBO[2] + colorVBOVel.y();
+			colorVBO[4] = colorVBO[4] + colorVBOVel.z();
+			
+			colorPkg.shapeColorVBO = colorVBO;
 		}
 
 		public int getPanelID(){
 			return panelID;
 		}
+
+		public static GlassPanelColorPackage getGlassPanelColorPackageInstance(float[] shapeColorVBO, 
+				Vector3f shapeColorVelocity, Color backgroundColor, Vector3f backgroundColorVelocity){
+			return new GlassPanelColorPackage(shapeColorVBO, shapeColorVelocity, backgroundColor, backgroundColorVelocity);
+		}
+		
+		public static class GlassPanelColorPackage{
+			
+			//Shape Colors
+			public float[] shapeColorVBO = {100, 255, 100 , 255 , 100, 255}; //color Virtual Buffer Object
+			public Color backgroundColor = new Color(0f,0f,0f); // BLACK
+			public Vector3f shapeColorVelocity = new Vector3f();
+			public Vector3f backgroundColorVelocity = new Vector3f();	
+			
+			public GlassPanelColorPackage (float[] shapeColorVBO, Vector3f shapeColorVelocity, Color backgroundColor, Vector3f backgroundColorVelocity) {
+				this.shapeColorVBO = shapeColorVBO;
+				this.shapeColorVelocity = shapeColorVelocity;
+				this.backgroundColor = backgroundColor;
+				this.backgroundColorVelocity = backgroundColorVelocity;
+			}
+			
+		}
+		
 }
