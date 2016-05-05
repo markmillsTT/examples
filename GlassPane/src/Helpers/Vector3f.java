@@ -25,6 +25,10 @@ public class Vector3f {
 		this.y = 0;
 		this.z = 0;
 	}
+	
+	public String printVector(){
+		return "< " + this.x + ", " + this.y + ", " + this.z + " >";
+	}
 
 	public float x()
 	{
@@ -80,6 +84,13 @@ public class Vector3f {
 		this.x = this.x - inVec.x();
 		this.y = this.y - inVec.y();
 		this.z = this.z - inVec.z();
+	}
+	
+	public float distanceFrom(Vector3f inVec) {
+		float xDist = Math.abs(this.x - inVec.x());
+		float yDist = Math.abs(this.y - inVec.y());
+		float zDist = Math.abs(this.z - inVec.z());
+		return (xDist + yDist + zDist);
 	}
 	
 }

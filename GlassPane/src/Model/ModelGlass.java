@@ -104,7 +104,7 @@ public final class ModelGlass implements ModelGlassInt {
 		int x = 0,y = 0,width = 0,height = 0;
 		
 		// Don't add anything to map if it's full
-		if(shapeMap.size() > 4000){
+		if(shapeMap.size() > 400){
 			shapeMap.clear();
 			return;
 		}
