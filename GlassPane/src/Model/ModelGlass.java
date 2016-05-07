@@ -35,19 +35,39 @@ public final class ModelGlass implements ModelGlassInt {
     public ModelGlass() {
     	
     	CoordinateSystem csHold;
-    	double radius = 3.0;
-    	double zOffset = 130.0;
+    	float placementRadius = 0.75f;
+    	float pointRadius = 0.5f;
+    	float zOffset = 130.0f;
     	int count = 0;
     	
-    	for(double phi = 0 ; phi < 2.0*Math.PI ; phi += (2*Math.PI/ 4.0)){
-    		for(double theta = 1 ; theta < 2.0*Math.PI ; theta += (2*Math.PI/ 1.0)){
+    	for(double phi = 0 ; phi < 2.0*Math.PI ; phi += (2*Math.PI/ 64.0)){
+    		for(double theta = 1 ; theta < 2.0*Math.PI ; theta += (2*Math.PI/ 32.0)){
     			csHold = new CoordinateSystem(count);
+    			
     			csHold.setDistanceVectorFromOrg(new Vector3f(
-    					(float)(radius*Math.sin(theta)*Math.cos(phi)),
-    					(float)(radius*Math.sin(theta)*Math.cos(phi)),
-    					(float)(radius*Math.cos(phi) + zOffset)));
-    			SwirlDroplet droplet = new SwirlDroplet(csHold);
-//    			Sphere sphere = new Sphere(4.0f, 4, 16, csHold);
+    					(float)(placementRadius*Math.sin(theta)*Math.cos(phi)),
+    					(float)(placementRadius*Math.sin(theta)*Math.cos(phi)),
+    					(float)(placementRadius*Math.cos(phi) + zOffset)));
+
+    			ConwayGameOfLife3DMatrix conwayGame = new ConwayGameOfLife3DMatrix(csHold,pointRadius);
+    			
+    			Vector3f seedLocation = new Vector3f(
+    					(int)(placementRadius*Math.sin(theta)*Math.cos(phi)),
+    					(int)(placementRadius*Math.sin(theta)*Math.cos(phi)),
+    					(int)(placementRadius*Math.cos(phi)));
+    			
+    			conwayGame.addNewSeed(seedLocation);
+    			
+    			for ( float x = -5f ; x <= 5f ; x += 1f ) {
+					for ( float y = -5f ; y <= 5f ; y += 1f ) {
+						for ( float z = -5f ; z <= 5f ; z += 1f ) {
+							seedLocation = new Vector3f( (float) (Math.random() * x), (float) (Math.random() * y), (float) (Math.random() * z) );
+							conwayGame.addNewSeed(seedLocation);
+						}
+					}
+    			}
+    			
+    			csHold.addToViewables(conwayGame);
 	    		allCoords.add(csHold);
 	    		count++;
     		}
@@ -193,6 +213,30 @@ public final class ModelGlass implements ModelGlassInt {
 				pixVectorRight.sub(pixVectorLeft);
 				width = (int) pixVectorRight.length();
 				height = width;
+			} else if ( vo instanceof ConwayGameOfLife3DMatrix ){
+				ConwayGameOfLife3DMatrix sd = (ConwayGameOfLife3DMatrix) vo;
+				float sphereRadius = sd.getPointRadius();
+				//top left corner of each cube center for projection... say cube radius = .5 meters
+				// LOOKS LIKE POST-IT ON TOP LEFT CORNER OF CUBE... WITH SAME AREA AS FACE... tehe
+				topLeft.add(new Vector3f((float)(-sphereRadius),
+						(float)(sphereRadius),
+						(float)(-sphereRadius)));
+				topRight.add(new Vector3f((float)sphereRadius,(float)sphereRadius,(float)(-sphereRadius)));
+				/* Apply transforms if they exist */
+				if(transforms != null){
+					topLeft = applyTransforms(topLeft,transforms);
+					topRight = applyTransforms(topRight,transforms);
+				}
+				Vector3f pixVectorLeft = mapVectorToPixelVector(topLeft,drawingBoundsForPort);
+				Vector3f pixVectorRight = mapVectorToPixelVector(topRight,drawingBoundsForPort);
+				
+				x = (int) pixVectorLeft.x();
+				y = (int) pixVectorLeft.y();
+				
+				pixVectorRight.sub(pixVectorLeft);
+				width = (int) pixVectorRight.length();
+				height = width;
+				
 			}
 				//FIXME --- point is to middle of a cube, but projection is just front side parallel to viewer
 			if(x >= -drawingBoundsForPort.width && x < 2*drawingBoundsForPort.width && y >= -1.5*drawingBoundsForPort.height && y <= 1.5*drawingBoundsForPort.height )
@@ -309,8 +353,6 @@ public final class ModelGlass implements ModelGlassInt {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	
 
 	@Override
 	public Map<Vector3f, Shape> getAllCurrentCamera2DScreenProjections(

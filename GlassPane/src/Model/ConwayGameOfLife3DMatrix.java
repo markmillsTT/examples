@@ -19,7 +19,8 @@ import Helpers.Vector3f;
  *
  ** With each iteration of the model:
  **** New seeds are planted at specified XYZ locations
- **** "Life" is spread to each each cell by following the 4 rules of Conway's Game for each Orthogonal Plane
+ **** "Life" is spread to each each cell by following a slight variation of the 4 rules of Conway's Game for each Orthogonal Plane
+ ****** There are 26 possible neighbors - "Life" rules are scaled accordingly by multiplying "Life" neighbor numbers by 13/4
  **** "Life" is first spread in the XY plane, followed by the XZ plane, followed by the YZ plane
  **** Running total of consecutive iterations that a cell is "Alive" are recorded in the dimensional arrays
  **** Dead Cells are set to 0
@@ -34,11 +35,13 @@ public class ConwayGameOfLife3DMatrix implements ViewableModel {
 	public final CoordinateSystem objCoordSystem;
 	public List<Vector3f> newSeedLocations;
 	public Map<Vector3f,Integer> currentLiveCellLocations;
+	public float pointRadius;
 	
-	public ConwayGameOfLife3DMatrix(CoordinateSystem objCoordSystem) {
+	public ConwayGameOfLife3DMatrix(CoordinateSystem objCoordSystem, float pointRadius) {
 		
 		this.objCoordSystem = objCoordSystem;
 		this.objCoordSystem.addToViewables(this);
+		this.pointRadius = pointRadius;
 		this.newSeedLocations = new ArrayList<Vector3f>();
 		this.currentLiveCellLocations = new HashMap<Vector3f,Integer>();
 		
@@ -60,8 +63,14 @@ public class ConwayGameOfLife3DMatrix implements ViewableModel {
 	 */
 	@Override
 	public List<Vector3f> getAllPositionVectorsInOCS(long t) {
+	
 		iterateLifeAfterPlantingNewSeeds();
 		return getVectorsToAllLiveCells();
+		
+	}
+	
+	public float getPointRadius() {
+		return this.pointRadius;
 	}
 
 	private void iterateLifeAfterPlantingNewSeeds() {
@@ -72,14 +81,34 @@ public class ConwayGameOfLife3DMatrix implements ViewableModel {
 
 	private void plantNewSeeds() {
 		
+		Map<Vector3f,Integer> localCurrentCellLocations = new HashMap<Vector3f,Integer> (this.currentLiveCellLocations);
+		for ( Vector3f currentLiveCellLocation : this.currentLiveCellLocations.keySet() ) {
+			localCurrentCellLocations.put( currentLiveCellLocation, this.currentLiveCellLocations.get(currentLiveCellLocation) ); 
+		}
+		
 		for(Vector3f newSeedLoc : this.newSeedLocations) {
-			for(Vector3f liveCellLoc : this.currentLiveCellLocations.keySet()) {
+			
+			if ( currentLiveCellLocations.size() == 0 ) {
+				this.currentLiveCellLocations.put( new Vector3f (newSeedLoc.x(), newSeedLoc.y(), newSeedLoc.z() ) , 1 );
+				localCurrentCellLocations.put( newSeedLoc, 1 );
+			} else {
+				
+				for(Vector3f liveCellLoc : localCurrentCellLocations.keySet()) {
 
-				if(newSeedLoc.distanceFrom(liveCellLoc) == 0f) {
-					Integer currentWeight = this.currentLiveCellLocations.get(liveCellLoc);
-					this.currentLiveCellLocations.put(liveCellLoc, (currentWeight + 1));
-				} else {
-					this.currentLiveCellLocations.put(newSeedLoc, 1);
+					if(newSeedLoc.distanceFrom(liveCellLoc) == 0f) {
+						Integer currentWeight = this.currentLiveCellLocations.get(liveCellLoc);
+						if(currentWeight == null) {
+							this.currentLiveCellLocations.put( liveCellLoc, 1 );
+							localCurrentCellLocations.put( liveCellLoc, 1 );
+						} else {
+							this.currentLiveCellLocations.put( liveCellLoc, (currentWeight + 1));
+							localCurrentCellLocations.put( liveCellLoc, (currentWeight + 1));
+						}
+						
+					} else {
+						this.currentLiveCellLocations.put(newSeedLoc, 1);
+					}
+					
 				}
 				
 			}
@@ -100,27 +129,119 @@ public class ConwayGameOfLife3DMatrix implements ViewableModel {
 	 */
 	public void iterateLife() {
 
-		for( Vector3f liveCellLocation : this.currentLiveCellLocations.keySet() ) {
-			// Spread life in following order: XY, XZ, YZ
-			spreadLifeAround(liveCellLocation, "xy");
-			spreadLifeAround(liveCellLocation, "xz");
-			spreadLifeAround(liveCellLocation, "yz");
-		}
+		Map<Vector3f, Integer> currentLiveCellLocationsLocal = this.currentLiveCellLocations;
+		// Spread life in following order: XY, XZ, YZ
+		spreadLifeAround(currentLiveCellLocationsLocal);
 		
 	}
 	
 	// TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
-	// need to figure out quick way to determain number of neighbors to a liveCellLocation
-	private void spreadLifeAround(Vector3f liveCellLocation, String plane) {
-		switch(plane) {
-			case "xy":
-
-				break;
-			case "xz":
-				break;
-			case "yz":
-				break;
+	// need to figure out quick way to determaine number of neighbors to a liveCellLocation
+	private void spreadLifeAround(Map<Vector3f, Integer> currentLiveCellLocations) {
+		
+		Vector3f[] currentLiveCellLocationsArray = new Vector3f[currentLiveCellLocations.size()];
+		currentLiveCellLocations.keySet().toArray(currentLiveCellLocationsArray);
+		
+		for( Vector3f liveCellLocation : currentLiveCellLocationsArray ) {
+			
+			int numLiveNeighbors = findLiveNeighborsCount(liveCellLocation, currentLiveCellLocationsArray);
+			
+			switch(numLiveNeighbors) {
+				case 0:
+				case 1:
+				case 2:
+				case 3:
+				case 4:
+				case 5:
+				case 6:
+				case 7:
+				case 8:
+					this.currentLiveCellLocations.remove(liveCellLocation);
+					break;
+				case 9:
+				case 10:
+				case 11:
+				case 12:
+				case 13:
+					break;
+				case 14:
+				case 15:
+				case 16:
+				case 17:
+				case 18:
+					for ( int xShift = -1 ; xShift <= 1 ; xShift += 2 ) {
+						for ( int yShift = -1 ; yShift <= 1 ; yShift += 2 ) {
+							for ( int zShift = -1 ; zShift <= 1 ; zShift += 2 ) {
+								Vector3f neighborLoc = new Vector3f ( ( liveCellLocation.x() + xShift ) ,( liveCellLocation.y() + yShift ), ( liveCellLocation.y() + yShift ));
+								if (!this.currentLiveCellLocations.containsKey(neighborLoc) ) {
+									this.currentLiveCellLocations.put(neighborLoc, 1);
+								} else if ( this.currentLiveCellLocations.get(neighborLoc) == null ) {
+									this.currentLiveCellLocations.put(neighborLoc, 1);
+								} else if ( this.currentLiveCellLocations.get(neighborLoc) != null) {
+									Integer weight = this.currentLiveCellLocations.get(neighborLoc);
+									weight++;
+									this.currentLiveCellLocations.put(neighborLoc, weight);
+								}
+							}
+						}
+					}
+					break;
+				case 19:
+				case 20:
+				case 21:
+				case 22:
+				case 23:
+				case 24:
+				case 25:
+				case 26:
+					this.currentLiveCellLocations.remove(liveCellLocation);
+					break;
+			}
+			
 		}
+		
+	}
+
+	private int findLiveNeighborsCount( Vector3f currentLiveCellLocation, Vector3f[] allLiveCellLocations) {
+		
+		List<Vector3f> neighborList = new ArrayList<Vector3f>();
+		int neighborCount = 0;
+		
+		for ( int i = 0 ; i < allLiveCellLocations.length ; i++ ) {
+			
+			for ( int n = 1 ; n <= 8 ; n++ ) {
+				
+				Vector3f possibleNeighbor = allLiveCellLocations[i];
+					
+				if( ( ( (int) possibleNeighbor.x() == (int) (currentLiveCellLocation.x() + 1) ) ||
+						( (int) possibleNeighbor.x() == (int) (currentLiveCellLocation.x() - 1)) )
+						&&
+						( ( (int) possibleNeighbor.y() == (int) (currentLiveCellLocation.y() + 1) ) ||
+								( (int) possibleNeighbor.y() == (int) (currentLiveCellLocation.y() - 1)) ) 
+						&&
+						( ( (int) possibleNeighbor.z() == (int) (currentLiveCellLocation.z() + 1) ) ||
+								( (int) possibleNeighbor.z() == (int) (currentLiveCellLocation.z() - 1)) ) ) {
+					
+					if( !neighborList.isEmpty() && !neighborList.contains(possibleNeighbor)) {
+						neighborList.add(possibleNeighbor);
+						neighborCount++;
+					} else if ( neighborList.isEmpty() ) {
+						neighborList.add(possibleNeighbor);
+						neighborCount++;
+					}
+					
+				}
+					
+				break;
+									
+			}
+			
+		}
+		
+//		if(neighborCount != 0) {
+//			neighborCount = 3;
+//		}
+		return neighborCount;
 	}
 
 	private void clearNewSeedList() {
@@ -128,9 +249,7 @@ public class ConwayGameOfLife3DMatrix implements ViewableModel {
 	}
 
 	private List<Vector3f> getVectorsToAllLiveCells() {
-		iterateLifeAfterPlantingNewSeeds();
-		// TODO make vectors pointing to live cells
-		return null;
+		return new ArrayList<Vector3f>(this.currentLiveCellLocations.keySet());
 	}	
 	
 	/**
@@ -145,7 +264,7 @@ public class ConwayGameOfLife3DMatrix implements ViewableModel {
 		newSeedLocations.add(seedLocation);
 	}
 	
-	private void addNewListOfSeeds(List<Vector3f> seedList) {
+	public void addNewListOfSeeds(List<Vector3f> seedList) {
 		newSeedLocations.addAll(seedList);
 	}
 

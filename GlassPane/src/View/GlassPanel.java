@@ -8,12 +8,9 @@ import java.awt.Shape;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.ImageObserver;
-import java.io.File;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import Controller.ControllerGlassInt;
@@ -45,7 +42,6 @@ public class GlassPanel extends JPanel {
 					}
 				}
 			};
-			this.colorPkg = colorPkg;
 			this.addKeyListener(listener);
 		}
 		
@@ -75,16 +71,9 @@ public class GlassPanel extends JPanel {
 			
 			updateColorVBO();
 			updateBackgroundColor();
-//			if(globalGraphics == null){
-//				globalGraphics = g2;
-//			} else {
-//				g2 = globalGraphics;
-//			}
 			
 			boolean flashRedraw = ViewGlass.flashRedraw;
 
-//			g2.setColor(new Color(0.5f, 0.0f, 0.2f));
-//			g2.fill(new Rectangle2D.Double(0,0,2000,2000));
 //			Image img;
 //			try {
 //				img = ImageIO.read(new File("res/MarkLauren.jpg"));
@@ -93,13 +82,13 @@ public class GlassPanel extends JPanel {
 //				e.printStackTrace();
 //				return;
 //			}
-//			ImageObserver observer = new ImageObserver() {
-//				@Override
-//				public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-//					// TODO Auto-generated method stub
-//					return false;
-//				}
-//			};
+			ImageObserver observer = new ImageObserver() {
+				@Override
+				public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
+					// TODO Auto-generated method stub
+					return false;
+				}
+			};
 			
 //			g2.drawImage(img, -100, 0, observer);
 //			g2.drawImage(img,
@@ -141,14 +130,14 @@ public class GlassPanel extends JPanel {
 //			int[] x1 = {
 //					(int)(-100 + count),
 //					(int)(-100 + count),
-//					(int)(img.getWidth(observer) - 2*count),
-//					(int)(img.getWidth(observer) - 2*count)
+//					(int)( -2 * count),
+//					(int)( -2 * count)
 //					};
 //			int[] y1 = {
-//					(int)(-100 + .5*count),
-//					(int)(img.getHeight(observer) - 4*count),
-//					(int)(img.getHeight(observer) - 4*count),
-//					(int)(-100 + .5*count)
+//					(int)(-100 + count),
+//					(int)( -4*count),
+//					(int)( -4*count),
+//					(int)(-100 + count)
 //					};
 //			g2.fill(new Polygon(x1,y1,4));
 //			
