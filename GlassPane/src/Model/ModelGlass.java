@@ -40,39 +40,39 @@ public final class ModelGlass implements ModelGlassInt {
     	float zOffset = 130.0f;
     	int count = 0;
     	
-    	for(double phi = 0 ; phi < 2.0*Math.PI ; phi += (2*Math.PI/ 64.0)){
-    		for(double theta = 1 ; theta < 2.0*Math.PI ; theta += (2*Math.PI/ 32.0)){
-    			csHold = new CoordinateSystem(count);
-    			
-    			csHold.setDistanceVectorFromOrg(new Vector3f(
-    					(float)(placementRadius*Math.sin(theta)*Math.cos(phi)),
-    					(float)(placementRadius*Math.sin(theta)*Math.cos(phi)),
-    					(float)(placementRadius*Math.cos(phi) + zOffset)));
-
-    			ConwayGameOfLife3DMatrix conwayGame = new ConwayGameOfLife3DMatrix(csHold,pointRadius);
-    			
-    			Vector3f seedLocation = new Vector3f(
-    					(int)(placementRadius*Math.sin(theta)*Math.cos(phi)),
-    					(int)(placementRadius*Math.sin(theta)*Math.cos(phi)),
-    					(int)(placementRadius*Math.cos(phi)));
-    			
-    			conwayGame.addNewSeed(seedLocation);
-    			
-    			for ( float x = -5f ; x <= 5f ; x += 1f ) {
-					for ( float y = -5f ; y <= 5f ; y += 1f ) {
-						for ( float z = -5f ; z <= 5f ; z += 1f ) {
-							seedLocation = new Vector3f( (float) (Math.random() * x), (float) (Math.random() * y), (float) (Math.random() * z) );
-							conwayGame.addNewSeed(seedLocation);
-						}
-					}
-    			}
-    			
-    			csHold.addToViewables(conwayGame);
-	    		allCoords.add(csHold);
-	    		count++;
-    		}
-    	}
-    	
+//    	for(double phi = 0 ; phi < 2.0*Math.PI ; phi += (2*Math.PI/ 64.0)){
+//    		for(double theta = 1 ; theta < 2.0*Math.PI ; theta += (2*Math.PI/ 32.0)){
+//    			csHold = new CoordinateSystem(count);
+//    			
+//    			csHold.setDistanceVectorFromOrg(new Vector3f(
+//    					(float)(placementRadius*Math.sin(theta)*Math.cos(phi)),
+//    					(float)(placementRadius*Math.sin(theta)*Math.cos(phi)),
+//    					(float)(placementRadius*Math.cos(phi) + zOffset)));
+//
+//    			ConwayGameOfLife3DMatrix conwayGame = new ConwayGameOfLife3DMatrix(csHold,pointRadius);
+//    			
+//    			Vector3f seedLocation = new Vector3f(
+//    					(int)(placementRadius*Math.sin(theta)*Math.cos(phi)),
+//    					(int)(placementRadius*Math.sin(theta)*Math.cos(phi)),
+//    					(int)(placementRadius*Math.cos(phi)));
+//    			
+//    			conwayGame.addNewSeed(seedLocation);
+//    			
+//    			for ( float x = -5f ; x <= 5f ; x += 1f ) {
+//					for ( float y = -5f ; y <= 5f ; y += 1f ) {
+//						for ( float z = -5f ; z <= 5f ; z += 1f ) {
+//							seedLocation = new Vector3f( (float) (Math.random() * x), (float) (Math.random() * y), (float) (Math.random() * z) );
+//							conwayGame.addNewSeed(seedLocation);
+//						}
+//					}
+//    			}
+//    			
+//    			csHold.addToViewables(conwayGame);
+//	    		allCoords.add(csHold);
+//	    		count++;
+//    		}
+//    	}
+//    	
 //    	csHold = new CoordinateSystem(count);
 //		csHold.setDistanceVectorFromOrg(new Vector3f(
 //				(float)(0),
@@ -82,17 +82,18 @@ public final class ModelGlass implements ModelGlassInt {
 //		Sphere sphere = new Sphere(4.0f, 4, 16, csHold);
 //		allCoords.add(csHold);
     	
-//    	for(double theta = 1 ; theta < 2.0*Math.PI ; theta += (2*Math.PI/ 4.0)){
-//			csHold = new CoordinateSystem(count);
-//			csHold.setDistanceVectorFromOrg(new Vector3f(
-//					(float)(radius*Math.sin(theta)*Math.cos(0)),
-//					(float)(radius*Math.sin(theta)*Math.sin(0)),
-//					(float)(radius*Math.cos(theta) + zOffset)));
-//			SwirlDroplet droplet = new SwirlDroplet(csHold);
-////			Sphere sphere = new Sphere(4.0f, 4, 16, csHold);
-//    		allCoords.add(csHold);
-//    		count++;
-//		}
+    	
+    	for(double theta = 1 ; theta < 2.0*Math.PI ; theta += (2*Math.PI/ 4.0)){
+			csHold = new CoordinateSystem(count);
+			csHold.setDistanceVectorFromOrg(new Vector3f(
+					(float)(placementRadius*Math.sin(theta)*Math.cos(0)),
+					(float)(placementRadius*Math.sin(theta)*Math.sin(0)),
+					(float)(placementRadius*Math.cos(theta) + zOffset)));
+			SwirlDroplet droplet = new SwirlDroplet(csHold);
+//			Sphere sphere = new Sphere(4.0f, 4, 16, csHold);
+    		allCoords.add(csHold);
+    		count++;
+		}
     	
     }
     
@@ -124,7 +125,7 @@ public final class ModelGlass implements ModelGlassInt {
 		int x = 0,y = 0,width = 0,height = 0;
 		
 		// Don't add anything to map if it's full
-		if(shapeMap.size() > 400){
+		if(shapeMap.size() > 5000){
 			shapeMap.clear();
 			return;
 		}

@@ -1,16 +1,25 @@
 package View;
 
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import Controller.ControllerGlassInt;
@@ -22,7 +31,7 @@ public class GlassPanel extends JPanel {
 		Map<Vector3f,Shape> allShapesToDraw;
 		int panelID;//****** MUST BE UNIQUE FOR EVERY PANEL ****
 		ControllerGlassInt controller;
-		int framesToKeepPaint = 5;
+		int framesToKeepPaint = 50;
 		boolean showFarthestFirst = false;
 		GlassPanelColorPackage colorPkg = null;
 		
@@ -73,15 +82,25 @@ public class GlassPanel extends JPanel {
 			updateBackgroundColor();
 			
 			boolean flashRedraw = ViewGlass.flashRedraw;
+			AffineTransform originalTransform = g2.getTransform();
+			
+			Image rawImg;
+			BufferedImage buffImg;
+			try {
+				rawImg = ImageIO.read(new File("res/paradiseIsland.jpg"));
+				 // Create a buffered image with transparency
+				buffImg = new BufferedImage(rawImg.getWidth(null), rawImg.getHeight(null), BufferedImage.TYPE_INT_ARGB);
 
-//			Image img;
-//			try {
-//				img = ImageIO.read(new File("res/MarkLauren.jpg"));
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//				return;
-//			}
+			    // Draw the image on to the buffered image
+			    Graphics2D bGr = buffImg.createGraphics();
+			    bGr.drawImage(rawImg, 0, 0, null);
+			    bGr.dispose();
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return;
+			}
 			ImageObserver observer = new ImageObserver() {
 				@Override
 				public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
@@ -90,7 +109,7 @@ public class GlassPanel extends JPanel {
 				}
 			};
 			
-//			g2.drawImage(img, -100, 0, observer);
+//			g2.drawImage(buffImg, 0, 0, observer);
 //			g2.drawImage(img,
 ////				(int) (center.x() - allShapesToDraw.get(center).getBounds2D().getX()/2 ),
 ////				(int) (center.y() - allShapesToDraw.get(center).getBounds2D().getY()/2 + 150 ),
@@ -125,37 +144,137 @@ public class GlassPanel extends JPanel {
 			
 //			g2.drawImage(img, -100, 0, observer);
 			
-//			g2.setColor(colorPkg.backgroundColor);
-//			
-//			int[] x1 = {
-//					(int)(-100 + count),
-//					(int)(-100 + count),
-//					(int)( -2 * count),
-//					(int)( -2 * count)
-//					};
-//			int[] y1 = {
-//					(int)(-100 + count),
-//					(int)( -4*count),
-//					(int)( -4*count),
-//					(int)(-100 + count)
-//					};
-//			g2.fill(new Polygon(x1,y1,4));
-//			
-//			int[] x2 = {
-//					(int)(-100 + count),
-//					(int)(-100 + count),
-//					(int)(img.getWidth(observer) - count),
-//					(int)(img.getWidth(observer) - count)
-//					};
-//			int[] y2 = {
-//					(int)(-100 + count),
-//					(int)(img.getHeight(observer) - count),
-//					(int)(img.getHeight(observer) - count),
-//					(int)(-100 + count)
-//					};
-//			g2.fill(new Polygon(x2,y2,4));
+			int numCircleSections = 8;
+			for ( float phi = 0 ; phi < 2.0 * Math.PI + count ; phi += 2.0*Math.PI/numCircleSections + count/16f) {
+				
+				int numPoints = (int) (count % 24);
+				int[] x1 = new int[numPoints];
+				int[] y1 = new int[numPoints];
+				for ( int i = 0 ; i < numPoints ; i++ ) {
+					x1[i] = (int) ( this.getWidth() / 4.0f +
+//							(this.getWidth() / (2.0f + count % 2.0f)) *
+							(this.getWidth() / (2.0f)) *
+							Math.cos( i * 2.0 *Math.PI / numPoints));
+					y1[i] = (int) ( this.getHeight() / 4.0f +
+//							(this.getHeight() / (2.0f + count % 2.0f)) *
+							(this.getHeight() / (2.0f)) *
+							Math.sin( i * 2.0 *Math.PI / numPoints) );
+				}
+				
+				if( numCircleSections % 2 == 0 ) {
+					g2.setColor( new Color ( Math.abs( 127.5f - colorPkg.backgroundColor.getRed() ) / 255.0f ,
+							Math.abs( 127.5f - colorPkg.backgroundColor.getGreen() ) / 255.0f ,
+							Math.abs( 127.5f - colorPkg.backgroundColor.getBlue() ) / 255.0f , 
+							( count % 75.0f ) / 255.0f 
+							)
+							   );
+				} else if( numCircleSections % 2 != 0 ) {
+					g2.setColor( new Color ( Math.abs( 255.0f - 127.5f - colorPkg.backgroundColor.getRed() ) / 255.0f ,
+							Math.abs( 255.0f - 127.5f - colorPkg.backgroundColor.getGreen() ) / 255.0f ,
+							Math.abs( 255.0f - 127.5f - colorPkg.backgroundColor.getBlue() ) / 255.0f , 
+							( count % 75.0f ) / 255.0f 
+							)
+							   );
+				}
+				
+//				g2.fill(new Polygon(x1,y1,numPoints));
+				
+				Polygon windowToDrawImage = new Polygon(x1,y1,numPoints);
+				Rectangle rect = windowToDrawImage.getBounds();
+//				AffineTransform centerTransform = AffineTransform.
+//		                getTranslateInstance(-rect.x+1, -rect.y+1);
+//				g2.setTransform(centerTransform);
+				AffineTransform tx = AffineTransform.getRotateInstance(phi, this.getWidth() / 2.0f , this.getHeight() / 2.0f);
+//				AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);  
+//				buffImg = op.filter(buffImg, null);      
+//				Image scaledImg = buffImg.getScaledInstance( (int)  Math.abs(rect.getWidth()), (int) Math.abs(rect.getHeight()), Image.SCALE_SMOOTH);
+				
+				g2.setClip(windowToDrawImage);
+				AlphaComposite ac = java.awt.AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+						(float) Math.abs(0.5f -  ( count % 75.0f ) / 255.0f - (phi / (2.0 * Math.PI + count) ) ) );
+			    g2.setComposite(ac);
+			    g2.setTransform(tx);
+				g2.drawImage(buffImg, rect.x, rect.y,  Math.abs(buffImg.getWidth()),  Math.abs(buffImg.getHeight()), observer);
+//				g2.drawRenderedImage(buffImg, at);;
+				g2.setClip(windowToDrawImage);
+//				g2.drawImage(scaledImg, rect.x, rect.y, observer);
+				g2.setStroke(new BasicStroke(1f));
+				g2.setClip(null);
+				g2.fill(windowToDrawImage);
+//				g2.setTransform(AffineTransform.getRotateInstance(-phi, 0, 0 ));
+				
+//				g2.setTransform(originalTransform);
+			}
+					
+			numCircleSections = 8;
+			for ( float phi = 0 ; phi < 2.0 * Math.PI + count ; phi += 2.0*Math.PI/numCircleSections + count/16f) {
+				
+				int numPoints = (int) (count % 24);
+				int[] x2 = new int[numPoints];
+				int[] y2 = new int[numPoints];
+				for ( int i = 0 ; i < numPoints ; i++ ) {
+					x2[i] = (int) ( this.getWidth() / 4.0f +
+//							(this.getWidth() / (2.0f + count % 2.0f) ) *
+							(this.getWidth() / (2.0f)) *
+							Math.cos( i * 2.0 *Math.PI / numPoints) );
+					y2[i] = (int) ( this.getHeight() / 4.0f +
+//							(this.getHeight() / (2.0f + count % 2.0f)) *
+							(this.getHeight() / (2.0f)) *
+							Math.sin( i * 2.0 *Math.PI / numPoints) );
+				}
+				
+				if( numCircleSections % 2 == 0 ) {
+					g2.setColor( new Color ( Math.abs( 255.0f - 127.5f - colorPkg.backgroundColor.getRed() ) / 255.0f ,
+							Math.abs( 255.0f - 127.5f - colorPkg.backgroundColor.getGreen() ) / 255.0f ,
+							Math.abs( 255.0f - 127.5f - colorPkg.backgroundColor.getBlue() ) / 255.0f , 
+							( count % 75.0f ) / 255.0f 
+							)
+							   );
+				} else if( numCircleSections % 2 != 0 ) {
+					g2.setColor( new Color ( Math.abs( 127.5f - colorPkg.backgroundColor.getRed() ) / 255.0f ,
+							Math.abs( 127.5f - colorPkg.backgroundColor.getGreen() ) / 255.0f ,
+							Math.abs( 127.5f - colorPkg.backgroundColor.getBlue() ) / 255.0f , 
+							( count % 75.0f ) / 255.0f 
+							)
+							   );
+				}
+				
+//				g2.fill(new Polygon(x1,y1,numPoints));
+				
+				
+				Polygon windowToDrawImage = new Polygon(x2,y2,numPoints);
+				Rectangle rect = windowToDrawImage.getBounds();
+//				AffineTransform centerTransform = AffineTransform.
+//		                getTranslateInstance(-rect.x+1, -rect.y+1);
+//				g2.setTransform(centerTransform);
+				AffineTransform tx = AffineTransform.getRotateInstance(phi, this.getWidth() / 2.0f , this.getHeight() / 2.0f);
+//				AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);  
+//				buffImg = op.filter(buffImg, null);
+//				Image scaledImg = buffImg.getScaledInstance( (int)  Math.abs(rect.getWidth()), (int) Math.abs(rect.getHeight()), Image.SCALE_SMOOTH);
+				
+				g2.setClip(windowToDrawImage);
+				AlphaComposite ac = java.awt.AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+						(float) Math.abs(0.5f - ( count % 75.0f ) / 255.0f - (phi / (2.0 * Math.PI + count) ) ) );
+			    g2.setComposite(ac);
+			    g2.setTransform(tx);
+				g2.drawImage(buffImg, rect.x, rect.y, Math.abs(buffImg.getWidth()), Math.abs(buffImg.getHeight()), observer);
+//				g2.drawRenderedImage(buffImg, null);;
+				g2.setStroke(new BasicStroke(1f));
+				g2.setClip(null);
+				g2.fill(windowToDrawImage);
+//				g2.setTransform(AffineTransform.getRotateInstance(-phi, 0, 0) );
+				
+//				g2.setTransform(originalTransform);
+				
+			}
 			
-			count += 5f;
+//			g2.setTransform(AffineTransform.
+//	                getTranslateInstance(0, 0));
+			AlphaComposite ac = java.awt.AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f );
+		    g2.setComposite(ac);
+			
+			
+			count += .2f;
 			
 			if(controller == null)
 				controller = ViewGlass.controller;

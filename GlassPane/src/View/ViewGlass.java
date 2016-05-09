@@ -35,8 +35,8 @@ public final class ViewGlass extends JFrame implements ViewGlassInt {
 
     public static ControllerGlassInt controller;
     private final Timer timer = new Timer(20, this);
-    public static final int GLASSPANE_HEIGHT = 250;
-    public static final int GLASSPANE_WIDTH = 250;
+    public static final int GLASSPANE_HEIGHT = 800;
+    public static final int GLASSPANE_WIDTH = 800;
     final static boolean RIGHT_TO_LEFT = true;
 
     private int flashRedrawCount = 0;
@@ -48,6 +48,11 @@ public final class ViewGlass extends JFrame implements ViewGlassInt {
     private GlassPanel gp2;
     private GlassPanel gp3;
     private GlassPanel gp4;
+    private GlassPanel gp5;
+    private GlassPanel gp6;
+    private GlassPanel gp7;
+    private GlassPanel gp8;
+    private GlassPanel gp9;
     private ControlPanel cp;
 
     public ViewGlass() {
@@ -73,19 +78,103 @@ public final class ViewGlass extends JFrame implements ViewGlassInt {
     	if(RIGHT_TO_LEFT)
     		contentPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
     	
-    	GridLayout gl = new GridLayout(1,3);
+    	GridLayout gl = new GridLayout(1,1);
     	
     	contentPane.setLayout(gl);
-    	GridBagConstraints c = new GridBagConstraints();
+    	GridBagConstraints gbc = new GridBagConstraints();
+//    	contentPane.setLayout(gbc);
     	
     	// View 1
-    	float[] shapeColor1 = {127, 255, 127, 255, 127, 255 };
-    	Vector3f shapeColorVel1 = new Vector3f(1f, -1f, 1f);
-    	Color bkgColor1 = new Color(1.0f, 0.5f, 0.5f);
-    	Color bkgColor2 = new Color(0.5f, 1.0f, 0.5f);
-    	Color bkgColor3 = new Color(0.5f, 0.5f, 1.0f);
-    	Color bkgColor4 = new Color(0.66f, 0.66f, 0.66f);
-    	Vector3f bkgColorVel1 = new Vector3f(1f, -1f, 1f);
+    	float[] shapeColor1 = {30, 255, 90, 255, 60, 255 };
+    	Vector3f shapeColorVel1 = new Vector3f(1f, -2f, 3f);
+    	Color bkgColor1 = new Color(0.1f, 0.8f, 0.1f);
+    	Color bkgColor2 = new Color(0.2f, 0.1f, 0.7f);
+    	Color bkgColor3 = new Color(0.3f, 0.6f, 0.1f);
+    	Color bkgColor4 = new Color(0.4f, 0.1f, 0.5f);
+    	Color bkgColor5 = new Color(0.5f, 0.5f, 0.5f);
+    	Color bkgColor6 = new Color(0.6f, 0.1f, 0.3f);
+    	Color bkgColor7 = new Color(0.7f, 0.2f, 0.1f);
+    	Color bkgColor8 = new Color(0.8f, 0.1f, 0.1f);
+    	Color bkgColor9 = new Color(0.9f, 0.1f, 0.0f);
+ 
+    	/***
+    	//View 4
+    	float[] shapeColor4 = {100, 255, 200, 255, 100, 255 };
+    	Vector3f shapeColorVel4 = new Vector3f(2f, 4f, 2f);
+    	Vector3f bkgColorVel4 = new Vector3f(2f, 0f, 2f);
+    	
+    	GlassPanel.GlassPanelColorPackage colorPkg4 = GlassPanel.getGlassPanelColorPackageInstance(
+    			shapeColor4,
+    			shapeColorVel4,
+    			bkgColor4,
+    			bkgColorVel4
+    			); 
+    	
+    	this.gp4 = new GlassPanel(4,controller, colorPkg4);
+    	gbc.fill = GridBagConstraints.VERTICAL;
+    	//c.ipady = GLASSPANE_HEIGHT;
+//    	c.ipady = GLASSPANE_WIDTH;
+  //  	c.ipadx =GLASSPANE_HEIGHT;
+    	gbc.gridwidth = 2;
+    	gbc.gridheight = 2;
+    	gbc.weightx = .5;
+    	gbc.weighty = .5;
+    	gbc.gridx = 1;
+    	gbc.gridy = 1;
+    	contentPane.add(gp4,gl);
+    	
+    	//View 5
+    	float[] shapeColor5 = {127.5f, 255, 127.5f, 255, 127.5f, 255 };
+    	Vector3f shapeColorVel5 = new Vector3f(2f, 4f, 2f);
+    	Vector3f bkgColorVel5 = new Vector3f(-4f, 2f, -4f);
+    	
+    	GlassPanel.GlassPanelColorPackage colorPkg5 = GlassPanel.getGlassPanelColorPackageInstance(
+    			shapeColor5,
+    			shapeColorVel5,
+    			bkgColor5,
+    			bkgColorVel5
+    			); 
+    	
+    	this.gp5 = new GlassPanel(5,controller, colorPkg4);
+    	gbc.fill = GridBagConstraints.VERTICAL;
+    	//c.ipady = GLASSPANE_HEIGHT;
+//    	c.ipady = GLASSPANE_WIDTH;
+  //  	c.ipadx =GLASSPANE_HEIGHT;
+    	gbc.gridwidth = 2;
+    	gbc.gridheight = 2;
+    	gbc.weightx = .5;
+    	gbc.weighty = .5;
+    	gbc.gridx = 1;
+    	gbc.gridy = 1;
+    	contentPane.add(gp5,gl);
+    	
+    	//View 6
+    	float[] shapeColor6 = {127.5f, 255, 255, 255, 0, 255 };
+    	Vector3f shapeColorVel6 = new Vector3f(-2f, 1f, -2f);
+    	Vector3f bkgColorVel6 = new Vector3f(-2f, 0f, -2f);
+    	
+    	GlassPanel.GlassPanelColorPackage colorPkg6 = GlassPanel.getGlassPanelColorPackageInstance(
+    			shapeColor6,
+    			shapeColorVel6,
+    			bkgColor6,
+    			bkgColorVel6
+    			); 
+    	
+    	this.gp6 = new GlassPanel(6,controller, colorPkg4);
+    	gbc.fill = GridBagConstraints.VERTICAL;
+    	//c.ipady = GLASSPANE_HEIGHT;
+//    	c.ipady = GLASSPANE_WIDTH;
+  //  	c.ipadx =GLASSPANE_HEIGHT;
+    	gbc.gridwidth = 2;
+    	gbc.gridheight = 2;
+    	gbc.weightx = .5;
+    	gbc.weighty = .5;
+    	gbc.gridx = 1;
+    	gbc.gridy = 1;
+    	contentPane.add(gp6,gl);
+    	
+ ***/   	
+    	Vector3f bkgColorVel1 = new Vector3f(-2f, 2f, 2f);
     	
     	GlassPanel.GlassPanelColorPackage colorPkg1 = GlassPanel.getGlassPanelColorPackageInstance(
     			shapeColor1,
@@ -95,17 +184,18 @@ public final class ViewGlass extends JFrame implements ViewGlassInt {
     			);  	
     	
     	this.gp1 = new GlassPanel(1,controller, colorPkg1);    	
-    	c.fill = GridBagConstraints.HORIZONTAL;
+    	gbc.fill = GridBagConstraints.VERTICAL;
     	//c.ipady = GLASSPANE_HEIGHT;
-    	c.ipady = GLASSPANE_WIDTH;
+//    	c.ipady = GLASSPANE_WIDTH;
   //  	c.ipadx =GLASSPANE_HEIGHT;
-    	c.gridwidth = 1;
+    	gbc.gridwidth = 2;
 //    	c.gridheight = 4;
-    	c.gridheight = 1;
-    	c.weightx = 1;
-    	c.weighty = 1;
-    	c.gridx = 0;
-    	c.gridy = 0;
+    	gbc.gridheight = 2;
+    	gbc.weightx = .5;
+    	gbc.weighty = .5;
+    	gbc.gridx = 0;
+    	gbc.gridy = 0;
+    	
     	contentPane.add(gp1,gl);
     	contentPane.addKeyListener(new AllActionListeners() {
     		@Override
@@ -122,11 +212,11 @@ public final class ViewGlass extends JFrame implements ViewGlassInt {
     		
     	});
     	
-    	/***
+/***    	
     	//View 2
-    	float[] shapeColor2 = {127, 255, 127, 255, 127, 255 };
+    	float[] shapeColor2 = {150, 255, 125, 255, 150, 255 };
     	Vector3f shapeColorVel2 = new Vector3f(-1f, 1f, -1f);
-    	Vector3f bkgColorVel2 = new Vector3f(1f, -1f, 1f);
+    	Vector3f bkgColorVel2 = new Vector3f(0f, 2f, 2f);
     	
     	GlassPanel.GlassPanelColorPackage colorPkg2 = GlassPanel.getGlassPanelColorPackageInstance(
     			shapeColor2,
@@ -136,22 +226,22 @@ public final class ViewGlass extends JFrame implements ViewGlassInt {
     			); 
     	
     	this.gp2 = new GlassPanel(2,controller, colorPkg2);
-    	c.fill = GridBagConstraints.HORIZONTAL;
+    	gbc.fill = GridBagConstraints.VERTICAL;
     	//c.ipady = GLASSPANE_HEIGHT;
-    	c.ipady = GLASSPANE_WIDTH;
+//    	c.ipady = GLASSPANE_WIDTH;
   //  	c.ipadx =GLASSPANE_HEIGHT;
-    	c.gridwidth = 1;
-    	c.gridheight = 4;
-    	c.weightx = 1;
-    	c.weighty = 1;
-    	c.gridx = 3;
-    	c.gridy = 0;
+    	gbc.gridwidth = 2;
+    	gbc.gridheight = 2;
+    	gbc.weightx = .5;
+    	gbc.weighty = .5;
+    	gbc.gridx = 1;
+    	gbc.gridy = 0;
     	contentPane.add(gp2,gl);
     	
     	//View 3
-    	float[] shapeColor3 = {127, 255, 127, 255, 0, 127 };
-    	Vector3f shapeColorVel3 = new Vector3f(1f, -1f, 1f);
-    	Vector3f bkgColorVel3 = new Vector3f(1f, -1f, 1f);
+    	float[] shapeColor3 = {0, 255, 100, 255, 0, 127 };
+    	Vector3f shapeColorVel3 = new Vector3f(4f, -4f, 4f);
+    	Vector3f bkgColorVel3 = new Vector3f(2f, 2f, 2f);
     	
     	GlassPanel.GlassPanelColorPackage colorPkg3 = GlassPanel.getGlassPanelColorPackageInstance(
     			shapeColor3,
@@ -161,42 +251,92 @@ public final class ViewGlass extends JFrame implements ViewGlassInt {
     			); 
     	
     	this.gp3 = new GlassPanel(3,controller, colorPkg3);
-    	c.fill = GridBagConstraints.HORIZONTAL;
+    	gbc.fill = GridBagConstraints.VERTICAL;
     	//c.ipady = GLASSPANE_HEIGHT;
-    	c.ipady = GLASSPANE_WIDTH;
+//    	c.ipady = GLASSPANE_WIDTH;
   //  	c.ipadx =GLASSPANE_HEIGHT;
-    	c.gridwidth = 1;
-    	c.gridheight = 4;
-    	c.weightx = 1;
-    	c.weighty = 1;
-    	c.gridx = 2;
-    	c.gridy = 0;
+    	gbc.gridwidth = 2;
+    	gbc.gridheight = 2;
+    	gbc.weightx = .5;
+    	gbc.weighty = .5;
+    	gbc.gridx = 0;
+    	gbc.gridy = 1;
     	contentPane.add(gp3,gl);
     	
-    	//View 4
-    	float[] shapeColor4 = {127, 255, 127, 255, 127, 255 };
-    	Vector3f shapeColorVel4 = new Vector3f(-2f, 4f, -2f);
-    	Vector3f bkgColorVel4 = new Vector3f(-1f, 1f, -1f);
+    	//View 7
+    	float[] shapeColor7 = {50, 255, 150, 255, 250, 255 };
+    	Vector3f shapeColorVel7 = new Vector3f(-2f, -3f, -2f);
+    	Vector3f bkgColorVel7 = new Vector3f(-2f, -2f, -2f);
     	
-    	GlassPanel.GlassPanelColorPackage colorPkg4 = GlassPanel.getGlassPanelColorPackageInstance(
-    			shapeColor4,
-    			shapeColorVel4,
-    			bkgColor4,
-    			bkgColorVel4
+    	GlassPanel.GlassPanelColorPackage colorPkg7 = GlassPanel.getGlassPanelColorPackageInstance(
+    			shapeColor7,
+    			shapeColorVel7,
+    			bkgColor7,
+    			bkgColorVel7
     			); 
     	
-    	this.gp4 = new GlassPanel(4,controller, colorPkg2);
-    	c.fill = GridBagConstraints.VERTICAL;
+    	this.gp7 = new GlassPanel(7,controller, colorPkg4);
+    	gbc.fill = GridBagConstraints.VERTICAL;
     	//c.ipady = GLASSPANE_HEIGHT;
-    	c.ipady = GLASSPANE_WIDTH;
+//    	c.ipady = GLASSPANE_WIDTH;
   //  	c.ipadx =GLASSPANE_HEIGHT;
-    	c.gridwidth = 1;
-    	c.gridheight = 2;
-    	c.weightx = 1;
-    	c.weighty = 1;
-    	c.gridx = 1;
-    	c.gridy = 0;
-    	contentPane.add(gp4,gl);
+    	gbc.gridwidth = 2;
+    	gbc.gridheight = 2;
+    	gbc.weightx = .5;
+    	gbc.weighty = .5;
+    	gbc.gridx = 1;
+    	gbc.gridy = 1;
+    	contentPane.add(gp7,gl);
+    	
+    	//View 8
+    	float[] shapeColor8 = {127.5f, 255, 255, 255, 12.5f, 255 };
+    	Vector3f shapeColorVel8 = new Vector3f(-4f, -2f, -4f);
+    	Vector3f bkgColorVel8 = new Vector3f(0f, -2f, -2f);
+    	
+    	GlassPanel.GlassPanelColorPackage colorPkg8 = GlassPanel.getGlassPanelColorPackageInstance(
+    			shapeColor8,
+    			shapeColorVel8,
+    			bkgColor8,
+    			bkgColorVel8
+    			); 
+    	
+    	this.gp8 = new GlassPanel(8,controller, colorPkg4);
+    	gbc.fill = GridBagConstraints.VERTICAL;
+    	//c.ipady = GLASSPANE_HEIGHT;
+//    	c.ipady = GLASSPANE_WIDTH;
+  //  	c.ipadx =GLASSPANE_HEIGHT;
+    	gbc.gridwidth = 2;
+    	gbc.gridheight = 2;
+    	gbc.weightx = .5;
+    	gbc.weighty = .5;
+    	gbc.gridx = 1;
+    	gbc.gridy = 1;
+    	contentPane.add(gp8,gl);
+    	
+    	//View 9
+    	float[] shapeColor9 = {127.5f, 255, 0f, 255, 127.5f, 255 };
+    	Vector3f shapeColorVel9 = new Vector3f(2f, 4f, 2f);
+    	Vector3f bkgColorVel9 = new Vector3f(2f, -2f, -2f);
+    	
+    	GlassPanel.GlassPanelColorPackage colorPkg9 = GlassPanel.getGlassPanelColorPackageInstance(
+    			shapeColor9,
+    			shapeColorVel9,
+    			bkgColor9,
+    			bkgColorVel9
+    			); 
+    	
+    	this.gp9 = new GlassPanel(9,controller, colorPkg4);
+    	gbc.fill = GridBagConstraints.VERTICAL;
+    	//c.ipady = GLASSPANE_HEIGHT;
+//    	c.ipady = GLASSPANE_WIDTH;
+  //  	c.ipadx =GLASSPANE_HEIGHT;
+    	gbc.gridwidth = 2;
+    	gbc.gridheight = 2;
+    	gbc.weightx = .5;
+    	gbc.weighty = .5;
+    	gbc.gridx = 1;
+    	gbc.gridy = 1;
+    	contentPane.add(gp9,gl);
     	
     	***/
     	
