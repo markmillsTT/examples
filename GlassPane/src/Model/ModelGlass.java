@@ -125,7 +125,7 @@ public final class ModelGlass implements ModelGlassInt {
 		int x = 0,y = 0,width = 0,height = 0;
 		
 		// Don't add anything to map if it's full
-		if(shapeMap.size() > 5000){
+		if(shapeMap.size() > positionVectorsInOCS.size()){
 			shapeMap.clear();
 			return;
 		}
@@ -328,8 +328,8 @@ public final class ModelGlass implements ModelGlassInt {
 				get2DShapeProjectionForViewableObject(vo,positionVectorsInOCS, distVectorsToViewables,shapeMap,drawingBoundsForPort,transforms);
 				
 				//there is no surface in 1 or 3
-				if(glassPaneId != 2)
-					clearDataMap(glassPaneId);
+//				if(glassPaneId != 2)
+//					clearDataMap(glassPaneId);
 				/* DONE---Kept for documentation
 				TODO Get distance vectors to viewables ... then use information to create
 					2D projection shapes on computer screen

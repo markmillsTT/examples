@@ -72,6 +72,8 @@ public class SwirlDroplet implements ViewableModel {
 		
 		List<Vector3f> sp;
 		double omegaT = (t)*2*Math.PI/(2048.0 * 1.0);
+		this.swirlRadius = (omegaT % 10);
+//		this.sphereRadius = (omegaT % 1.5f);
 		sp = getSwirlPattern1(omegaT);
 //		sp = getSwirlPattern2(omegaT);
 //		sp = getSwirlPattern3(omegaT);
@@ -85,13 +87,21 @@ public class SwirlDroplet implements ViewableModel {
 		
 		List<Vector3f> allGreenArrows = new ArrayList<Vector3f>();
 		Vector3f distVectInOCS = new Vector3f();
-		for(int i = 0 ; i < this.numberDroplets; i++){
-			float x,y,z;
-			x = (float) ( 2.0f * swirlRadius*Math.sin(1.0f*omegaT+dropletThetaPhasesOCS[i]/8.0f) * swirlRadius*Math.cos(omegaT+dropletThetaPhasesOCS[i]/2.0f) );
-			y = (float) ( 2.0f * swirlRadius*Math.sin(1.0f*omegaT+dropletThetaPhasesOCS[i]/8.0f) * swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i]/2.0f) );
-			z = (float) ( 2.0f * swirlRadius*Math.cos(1.0f*omegaT+dropletThetaPhasesOCS[i]/8.0f) + zOffset);
-			distVectInOCS = new Vector3f(x, y, z); //green arrow in Level 1 part B
-			allGreenArrows.add(distVectInOCS);
+		int numSections = 4;
+		for ( float theta = 0 ; theta < (float) (2.0f * Math.PI) ; theta += (float) (2.0f * Math.PI / numSections)) {
+			for ( float phi = 0 ; phi < (float) (Math.PI) ; phi += (float) (2.0f * Math.PI / numSections)) {
+				for(int i = 0 ; i < this.numberDroplets; i++){
+					float x,y,z;
+					x = (float) ( 2.0f * swirlRadius*Math.sin(theta + 1.0f*omegaT+dropletThetaPhasesOCS[i]/8.0f) *
+							swirlRadius*Math.cos(phi + omegaT+dropletThetaPhasesOCS[i]/2.0f) );
+					y = (float) ( 2.0f * swirlRadius*Math.sin(theta + 1.0f*omegaT+dropletThetaPhasesOCS[i]/8.0f) *
+							swirlRadius*Math.sin(phi + omegaT+dropletThetaPhasesOCS[i]/2.0f) );
+					z = (float) ( 2.0f * swirlRadius*Math.cos(theta + 1.0f*omegaT+dropletThetaPhasesOCS[i]/8.0f) +
+							zOffset);
+					distVectInOCS = new Vector3f(x, y, z); //green arrow in Level 1 part B
+					allGreenArrows.add(distVectInOCS);
+				}
+			}
 		}
 		return allGreenArrows;
 	}
@@ -99,14 +109,20 @@ public class SwirlDroplet implements ViewableModel {
 	private List<Vector3f> getSwirlPattern2(double omegaT) {
 		List<Vector3f> allGreenArrows = new ArrayList<Vector3f>();
 		Vector3f distVectInOCS = new Vector3f();
-		for(int i = 0 ; i < this.numberDroplets; i++){
-			float x,y,z;
-			x = (float) ( 2.0f * swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i]/4.0f)*swirlRadius*Math.cos(omegaT+dropletThetaPhasesOCS[i]/2.0f) );
-			y = (float) ( 2.0f * swirlRadius*Math.cos(omegaT+dropletThetaPhasesOCS[i])/4.0f);
-			z = (float) ( 2.0f * swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i]/4.0f)*
-					swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i]/2.0f) + zOffset );
-			distVectInOCS = new Vector3f(x, y, z); //green arrow in Level 1 part B
-			allGreenArrows.add(distVectInOCS);
+		int numSections = 4;
+		for ( float theta = 0 ; theta < (float) (2.0f * Math.PI) ; theta += (float) (2.0f * Math.PI / numSections)) {
+			for ( float phi = 0 ; phi < (float) (Math.PI) ; phi += (float) (2.0f * Math.PI / numSections)) {
+				for(int i = 0 ; i < this.numberDroplets; i++){
+					float x,y,z;
+					x = (float) ( 2.0f * swirlRadius*Math.sin(theta + omegaT+dropletThetaPhasesOCS[i]/4.0f) *
+							swirlRadius*Math.cos(phi + omegaT+dropletThetaPhasesOCS[i]/2.0f) );
+					y = (float) ( 2.0f * swirlRadius*Math.cos(theta + omegaT+dropletThetaPhasesOCS[i])/4.0f);
+					z = (float) ( 2.0f * swirlRadius*Math.sin(theta + omegaT+dropletThetaPhasesOCS[i]/4.0f) *
+							swirlRadius*Math.sin(phi + omegaT+dropletThetaPhasesOCS[i]/2.0f) + zOffset );
+					distVectInOCS = new Vector3f(x, y, z); //green arrow in Level 1 part B
+					allGreenArrows.add(distVectInOCS);
+				}
+			}
 		}
 		return allGreenArrows;
 	}
@@ -114,13 +130,21 @@ public class SwirlDroplet implements ViewableModel {
 	private List<Vector3f> getSwirlPattern3(double omegaT) {
 		List<Vector3f> allGreenArrows = new ArrayList<Vector3f>();
 		Vector3f distVectInOCS = new Vector3f();
-		for(int i = 0 ; i < this.numberDroplets; i++){
-			float x,y,z;
-			x = (float) (4.0f*swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i]/4.0f)*Math.cos(omegaT+dropletThetaPhasesOCS[i]/12.0f));
-			y = (float) (4.0f*swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i]/4.0f)*Math.sin(omegaT+dropletThetaPhasesOCS[i]/12.0f));
-			z = (float) (2.0f*swirlRadius*Math.cos(omegaT+dropletThetaPhasesOCS[i]/4.0f) + zOffset );
-			distVectInOCS = new Vector3f(x, y, z); //green arrow in Level 1 part B
-			allGreenArrows.add(distVectInOCS);
+		int numSections = 4;
+		for ( float theta = 0 ; theta < (float) (2.0f * Math.PI) ; theta += (float) (2.0f * Math.PI / numSections)) {
+			for ( float phi = 0 ; phi < (float) (Math.PI) ; phi += (float) (2.0f * Math.PI / numSections)) {
+				for(int i = 0 ; i < this.numberDroplets; i++){
+					float x,y,z;
+					x = (float) (4.0f*swirlRadius*Math.sin(theta + omegaT+dropletThetaPhasesOCS[i]/4.0f) *
+							Math.cos( phi+omegaT+dropletThetaPhasesOCS[i]/12.0f));
+					y = (float) (4.0f*swirlRadius*Math.sin(theta + omegaT+dropletThetaPhasesOCS[i]/4.0f) *
+							Math.sin( phi+omegaT+dropletThetaPhasesOCS[i]/12.0f));
+					z = (float) (2.0f*swirlRadius*Math.cos(theta + omegaT+dropletThetaPhasesOCS[i]/4.0f) +
+							zOffset );
+					distVectInOCS = new Vector3f(x, y, z); //green arrow in Level 1 part B
+					allGreenArrows.add(distVectInOCS);
+				}
+			}
 		}
 		return allGreenArrows;
 	}
@@ -130,13 +154,21 @@ public class SwirlDroplet implements ViewableModel {
 		
 		List<Vector3f> allGreenArrows = new ArrayList<Vector3f>();
 		Vector3f distVectInOCS = new Vector3f();
-		for(int i = 0 ; i < this.numberDroplets; i++){
-			float x,y,z;
-			x = (float) (2.0f*swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i]/12.0f)*Math.cos(omegaT+dropletThetaPhasesOCS[i]/4.0f));
-			y = (float) (2.0f*swirlRadius*Math.sin(omegaT+dropletThetaPhasesOCS[i]/12.0f)*Math.sin(omegaT+dropletThetaPhasesOCS[i]/4.0f));
-			z = (float) (2.0f*swirlRadius*Math.cos(omegaT+dropletThetaPhasesOCS[i]/12.0f) + zOffset );
-			distVectInOCS = new Vector3f(x, y, z); //green arrow in Level 1 part B
-			allGreenArrows.add(distVectInOCS);
+		int numSections = 4;
+		for ( float theta = 0 ; theta < (float) (2.0f * Math.PI) ; theta += (float) (2.0f * Math.PI / numSections)) {
+			for ( float phi = 0 ; phi < (float) (Math.PI) ; phi += (float) (2.0f * Math.PI / numSections)) {
+				for(int i = 0 ; i < this.numberDroplets; i++){
+					float x,y,z;
+					x = (float) (2.0f*swirlRadius*Math.sin(theta+omegaT+dropletThetaPhasesOCS[i]/12.0f) *
+							Math.cos(phi+omegaT+dropletThetaPhasesOCS[i]/4.0f));
+					y = (float) (2.0f*swirlRadius*Math.sin(theta+omegaT+dropletThetaPhasesOCS[i]/12.0f) *
+							Math.sin(phi+omegaT+dropletThetaPhasesOCS[i]/4.0f));
+					z = (float) (2.0f*swirlRadius*Math.cos(theta+omegaT+dropletThetaPhasesOCS[i]/4.0f) +
+							zOffset );
+					distVectInOCS = new Vector3f(x, y, z); //green arrow in Level 1 part B
+					allGreenArrows.add(distVectInOCS);
+				}
+			}
 		}
 		return allGreenArrows;
 	}
