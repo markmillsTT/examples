@@ -167,7 +167,7 @@ public class GlassPanel extends JPanel {
 						this.getHeight() / 2 - buffImg.getHeight() / 2 ,
 						observer);
 				
-//				/***
+				/***
 				int numCircleSections = 8;
 				for ( float phi = 0 ; phi < 2.0 * Math.PI ; phi += 2.0*Math.PI/numCircleSections) {
 					
@@ -294,7 +294,7 @@ public class GlassPanel extends JPanel {
 	//				g2.setTransform(originalTransform);
 					
 				}
-//			***/
+			***/
 //			}
 			
 //			g2.setTransform(AffineTransform.

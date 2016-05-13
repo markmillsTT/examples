@@ -136,9 +136,9 @@ public class SwirlDroplet implements ViewableModel {
 				for(int i = 0 ; i < this.numberDroplets; i++){
 					float x,y,z;
 					x = (float) (4.0f*swirlRadius*Math.sin(theta + omegaT+dropletThetaPhasesOCS[i]/4.0f) *
-							Math.cos( phi+omegaT+dropletThetaPhasesOCS[i]/12.0f));
+							Math.tan( phi+omegaT+dropletThetaPhasesOCS[i]/12.0f));
 					y = (float) (4.0f*swirlRadius*Math.sin(theta + omegaT+dropletThetaPhasesOCS[i]/4.0f) *
-							Math.sin( phi+omegaT+dropletThetaPhasesOCS[i]/12.0f));
+							Math.tan( phi+omegaT+dropletThetaPhasesOCS[i]/12.0f));
 					z = (float) (2.0f*swirlRadius*Math.cos(theta + omegaT+dropletThetaPhasesOCS[i]/4.0f) +
 							zOffset );
 					distVectInOCS = new Vector3f(x, y, z); //green arrow in Level 1 part B
