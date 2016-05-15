@@ -47,7 +47,7 @@ public class GlassPanel extends JPanel {
 		public GlassPanel(int panelNum, ControllerGlassInt controller){
 			this.panelID = panelNum;
 			this.controller = controller;
-			this.numBuffImgs = 83;
+			this.numBuffImgs = 33;
 			this.buffImgs = new BufferedImage[this.numBuffImgs];
 			AllActionListeners listener = new AllActionListeners(){
 				@Override
@@ -63,7 +63,7 @@ public class GlassPanel extends JPanel {
 		public GlassPanel(int panelNum, ControllerGlassInt controller, GlassPanelColorPackage colorPkg){
 			this.panelID = panelNum;
 			this.controller = controller;
-			this.numBuffImgs = 83;
+			this.numBuffImgs = 33;
 			this.buffImgs = new BufferedImage[this.numBuffImgs];
 			AllActionListeners listener = new AllActionListeners(){
 				@Override
@@ -100,7 +100,7 @@ public class GlassPanel extends JPanel {
 					try {
 		//				rawImg = ImageIO.read(new File("res/paradiseIsland.jpg"));
 		//				rawImg = ImageIO.read(new File("res/lightForest.jpg"));
-						rawImg = ImageIO.read(new File("res/mathGifImages/frame_" + i + "_delay-0.03s.gif" ));
+						rawImg = ImageIO.read(new File("res/XTAI_AphexTwin/firstSceneAphexTwin/frame_" + i + "_delay-0.1s.gif" ));
 						 // Create a buffered image with transparency
 						this.buffImgs[i] = new BufferedImage(rawImg.getWidth(null), rawImg.getHeight(null), BufferedImage.TYPE_INT_ARGB);
 		
@@ -163,11 +163,13 @@ public class GlassPanel extends JPanel {
 	//					g2.getColor(),
 	//					observer);
 				
+//				g2.scale(5.0, 4.0);
 				g2.drawImage(buffImg, this.getWidth() / 2 - buffImg.getWidth() / 2,
 						this.getHeight() / 2 - buffImg.getHeight() / 2 ,
 						observer);
-				
-				/***
+//				g2.drawImage(buffImg, 0, 0 , observer);
+				g2.scale(1.0, 1.0);
+//				/***
 				int numCircleSections = 8;
 				for ( float phi = 0 ; phi < 2.0 * Math.PI ; phi += 2.0*Math.PI/numCircleSections) {
 					
@@ -294,7 +296,7 @@ public class GlassPanel extends JPanel {
 	//				g2.setTransform(originalTransform);
 					
 				}
-			***/
+//			***/
 //			}
 			
 //			g2.setTransform(AffineTransform.
@@ -304,7 +306,7 @@ public class GlassPanel extends JPanel {
 		    g2.setComposite(ac);
 			
 			
-			count += 1f;
+			count += .2f;
 			
 			if(controller == null)
 				controller = ViewGlass.controller;

@@ -35,9 +35,9 @@ public final class ModelGlass implements ModelGlassInt {
     public ModelGlass() {
     	
     	CoordinateSystem csHold;
-    	float placementRadius = 0.75f;
-    	float pointRadius = 0.5f;
-    	float zOffset = 130.0f;
+    	float placementRadius = 2.0f;
+    	float pointRadius = 0.55f;
+    	float zOffset = 150.0f;
     	int count = 0;
     	
 //    	for(double phi = 0 ; phi < 2.0*Math.PI ; phi += (2*Math.PI/ 64.0)){
